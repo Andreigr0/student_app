@@ -456,35 +456,6 @@ class RoleIcon(Base):
         return f"{self.id}.svg"
 
 
-class Student(Base):
-    __tablename__ = "students"
-
-    id = Column(Integer, primary_key=True, index=True)
-    contingent_person_id = Column(Integer, index=True)
-    about = Column(Text, nullable=True)
-    resume = Column(Text, nullable=True)
-    resume_content_type = Column(String(255), nullable=True)
-    resume_file_size = Column(Integer, nullable=True)
-    is_full_feedback = Column(Boolean, default=False)
-    creator_id = Column(Integer, nullable=True)
-    updater_id = Column(Integer, nullable=True)
-    created_at = Column(Integer, server_default=func.now())
-    updated_at = Column(Integer, server_default=func.now(), onupdate=func.now())
-
-    competencies = relationship("Competence", secondary="student_competence")
-    subject_areas = relationship("SubjectArea", secondary="student_subject_area")
-    reviews = relationship("MemberReview",
-                           primaryjoin="Student.contingent_person_id == MemberReview.contingent_person_id")
-    projects = relationship("Project", secondary="members")
-    invites = relationship("Invite", primaryjoin="Student.contingent_person_id == Invite.contingent_person_id")
-    bids = relationship("Bid", primaryjoin="Student.contingent_person_id == Bid.contingent_person_id")
-    project_report_periods = relationship("ProjectReportPeriod", secondary="members")
-    reports = relationship("StudentReport", primaryjoin="Student.contingent_person_id == Member.contingent_person_id")
-
-    def by_contingent_person_id(cls, db, contingent_person_id: int):
-        return db.query(cls).filter(cls.contingent_person_id == contingent_person_id).first()
-
-
 class StudentReport(Base):
     __tablename__ = "student_reports"
 
