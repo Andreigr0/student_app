@@ -2,6 +2,7 @@ from sqlalchemy import Integer, Column, ForeignKey, String, func, Enum, Boolean,
 import enum
 
 from app.database import Base
+from app.utils import TimestampMixin
 
 
 class BidStatus(enum.Enum):
@@ -44,7 +45,7 @@ class BidStatus(enum.Enum):
     #     return [cls.Viewed, cls.InTeam, cls.Refusal]
 
 
-class BidModel(Base):
+class BidModel(Base, TimestampMixin):
     __tablename__ = 'bids'
 
     id = Column(Integer, primary_key=True)
@@ -56,9 +57,6 @@ class BidModel(Base):
     reason = Column(String)
     refusal_reason = Column(String, nullable=True)
     is_archival = Column(Boolean, default=False)
-
-    created_at = Column(TIMESTAMP, nullable=False, default=func.now())
-    updated_at = Column(TIMESTAMP, nullable=False, default=func.now(), onupdate=func.now())
 
     # student = relationship('Student', backref='bids')
     # projectRole = relationship('ProjectRole', backref='bids')
