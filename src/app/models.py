@@ -5,3 +5,4 @@ from invitations.models import InvitationModel
 from students.models import StudentModel
 from reports.models import StudentReportModel
 from reviews.models import MemberReviewModel
+from users.models import UserModel
