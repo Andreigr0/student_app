@@ -11,31 +11,6 @@ from sqlalchemy.sql import func
 from app.database import Base
 
 
-class ContactCommunicationType(str, Enum):
-    phone = "phone"
-    email = "email"
-    telegram = "telegram"
-
-
-class Contact(Base):
-    __tablename__ = "contacts"
-
-    id = Column(Integer, primary_key=True, index=True)
-    fio = Column(String)
-    email = Column(String, nullable=True)
-    position = Column(String)
-    telegram = Column(String, nullable=True)
-    phone = Column(String)
-    communication_type = Column(String, enum=ContactCommunicationType)
-    creator_id = Column(Integer, ForeignKey('users.id'), nullable=True)
-    updater_id = Column(Integer, ForeignKey('users.id'), nullable=True)
-    created_at = Column(Integer)
-    updated_at = Column(Integer)
-    company_id = Column(Integer, ForeignKey('companies.id'))
-
-    company = relationship("Company", back_populates="contacts")
-
-
 class Curator(Base):
     __tablename__ = "curators"
 

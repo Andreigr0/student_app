@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, Enum, ForeignKey
+from sqlalchemy.orm import relationship
 
 from app.database import Base
 import enum
@@ -36,13 +37,14 @@ class CompanyModel(Base):
     reason_rejection = Column(String, nullable=True)
 
     # representative_id = Column(Integer, ForeignKey("representatives.id"), nullable=True)
-
     active_project_count = Column(Integer, default=0)
 
     # creator_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     # updater_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     created_at = Column(Integer, nullable=True)
     updated_at = Column(Integer, nullable=True)
+
+    contacts = relationship('ContactModel', back_populates="company")
 
     # search_vector = Column(
     #     TSVectorType("name", "description", "site"),
@@ -78,3 +80,29 @@ class CompanyModel(Base):
     # @classmethod
     # def filter(cls, db, query_filter):
     #     return query_filter.apply(db.query(cls))
+
+
+class ContactCommunicationType(str, enum.Enum):
+    phone = "phone"
+    email = "email"
+    telegram = "telegram"
+
+
+class ContactModel(Base):
+    __tablename__ = "contacts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    fio = Column(String, nullable=False)
+    email = Column(String, nullable=True)
+    position = Column(String, nullable=True)
+    telegram = Column(String, nullable=True)
+    phone = Column(String, nullable=True)
+    communication_type = Column(Enum(ContactCommunicationType), nullable=True)
+
+    company_id = Column(Integer, ForeignKey('companies.id'), nullable=False)
+    company = relationship(CompanyModel, back_populates='contacts')
+
+    # creator_id = Column(Integer, ForeignKey('users.id'), nullable=True)
+    # updater_id = Column(Integer, ForeignKey('users.id'), nullable=True)
+    # created_at = Column(Integer)
+    # updated_at = Column(Integer)

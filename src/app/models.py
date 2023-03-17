@@ -1,4 +1,4 @@
-from companies.models import CompanyModel
+from companies.models import *
 from bids.models import BidModel
 from competencies.models import CompetenceModel
 from invitations.models import InvitationModel
