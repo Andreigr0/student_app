@@ -108,31 +108,6 @@ class ProjectRole(Base):
     role = relationship("Role", back_populates="project_roles")
     bids = relationship("Bid", back_populates="project_role")
 
-    # @staticmethod
-    # def suitable_by_contingent_person_id(company_id: int, contingent_person_id: int):
-    #     # from app.models import Invite, Member, Project, ProjectRoleCompetenceType
-    #     # from app.enums import InviteStatus, ProjectStatus
-    #
-    #     status_list = [f"'{status}'" for status in InviteStatus.get_passives()]
-    #     status_list = ",".join(status_list)
-    #
-    #     return (
-    #         ProjectRole.query
-    #         .join(Project)
-    #         .outerjoin(Invite, ((Invite.project_role_id == ProjectRole.id) & (
-    #                 Invite.contingent_person_id == contingent_person_id)))
-    #         .outerjoin(Member,
-    #                    ((Member.project_id == Project.id) & (Member.contingent_person_id == contingent_person_id)))
-    #         .filter(Member.id.is_(None))
-    #         .filter(Project.company_id == company_id)
-    #         .filter(Project.status == ProjectStatus.Open.value)
-    #         .filter((Invite.contingent_person_id.is_(None)) | (Invite.status.in_(status_list)))
-    #     )
-    #
-    # @staticmethod
-    # def by_id(project_role_id: int):
-    #     return ProjectRole.query.filter_by(id=project_role_id).first()
-
 
 class Role(Base, TimestampMixin):  # todo: add UserMixin
     __tablename__ = "roles"
@@ -143,10 +118,3 @@ class Role(Base, TimestampMixin):  # todo: add UserMixin
 
     def get_file_name(self) -> str:
         return f"{self.id}.svg"
-
-
-class StudentSubjectArea(Base):
-    __tablename__ = 'student_subject_area'
-    student_id = Column(Integer, ForeignKey('students.id'), primary_key=True)
-    subject_area_id = Column(Integer, ForeignKey('subject_areas.id'), primary_key=True)
-
