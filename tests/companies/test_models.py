@@ -1,4 +1,6 @@
-from companies.models import CompanyModel, CompanyEmployeeCount, CompanyStatus, ContactModel, ContactCommunicationType
+from companies.models import CompanyModel, CompanyEmployeeCount, CompanyStatus, ContactModel, ContactCommunicationType, \
+    CompaniesSubscribersModel
+from students.models import StudentModel
 
 
 def test_create_company_model(create_company_model):
@@ -35,3 +37,32 @@ def test_create_contact_model(db_test, faker, create_company_model):
     assert contact.phone == 'phone'
     assert contact.communication_type == ContactCommunicationType.phone
     assert contact.company_id == company.id
+
+
+def test_create_subscription(db_test, create_company_model):
+    company = create_company_model()
+
+    student = StudentModel(
+        about='About',
+        resume='Resume',
+        resume_content_type='application/pdf',
+        resume_file_size=123,
+        is_full_feedback=True,
+    )
+
+    company_subscription = CompaniesSubscribersModel();
+    company_subscription.company = company
+    student.subscribed_companies.append(company_subscription)
+
+    db_test.add(student)
+    db_test.commit()
+
+    assert student.id is not None
+    assert student.about == 'About'
+    assert student.resume == 'Resume'
+    assert student.resume_content_type == 'application/pdf'
+    assert student.resume_file_size == 123
+    assert student.is_full_feedback is True
+
+    assert len(student.subscribed_companies) == 1
+    assert student.subscribed_companies[0].company == company

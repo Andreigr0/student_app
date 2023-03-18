@@ -1,9 +1,11 @@
 from sqlalchemy import Column, Integer, Text, String, Boolean, func, TIMESTAMP
+from sqlalchemy.orm import relationship
 
 from app.database import Base
+from app.utils import TimestampMixin
 
 
-class StudentModel(Base):
+class StudentModel(Base, TimestampMixin):
     __tablename__ = "students"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -14,11 +16,10 @@ class StudentModel(Base):
     resume_file_size = Column(Integer, nullable=True)
     is_full_feedback = Column(Boolean, default=False)
 
+    subscribed_companies = relationship('CompaniesSubscribersModel', back_populates="student")
+
     # creator_id = Column(Integer, nullable=True)
     # updater_id = Column(Integer, nullable=True)
-
-    created_at = Column(TIMESTAMP, default=func.now())
-    updated_at = Column(TIMESTAMP, default=func.now(), onupdate=func.now())
 
     # competencies = relationship("CompetenceModel", secondary="student_competence")
     # subject_areas = relationship("SubjectArea", secondary="student_subject_area")

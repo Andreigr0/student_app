@@ -39,9 +39,11 @@ class ProjectManager(Base):
     id = Column(Integer, primary_key=True, index=True)
     project_id = Column(Integer, ForeignKey("projects.id"))
     contact_id = Column(Integer, ForeignKey("contacts.id"))
+
     participant = Column(Enum(ProjectParticipant), nullable=False)
-    created_at = Column(func.now())
-    updated_at = Column(func.now(), onupdate=func.now())
+
+    # created_at = Column(func.now())
+    # updated_at = Column(func.now(), onupdate=func.now())
 
     project = relationship("Project", back_populates="managers")
     contact = relationship("Contact", back_populates="projects")
@@ -52,50 +54,52 @@ class ProjectReportPeriod(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     project_id = Column(Integer, ForeignKey("projects.id", ondelete="CASCADE"), index=True)
-    name = Column(String, index=True)
-    start_date = Column(String, index=True)
-    finish_date = Column(String, index=True)
-    creator_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=True)
-    updater_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=True)
-    created_at = Column(Integer, index=True)
-    updated_at = Column(Integer, index=True)
+
+    name = Column(String, nullable=False)
+    start_date = Column(String, nullable=False)
+    finish_date = Column(String, nullable=False)
+
+    # creator_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=True)
+    # updater_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=True)
+    # created_at = Column(Integer, index=True)
+    # updated_at = Column(Integer, index=True)
 
     project = relationship("Project", back_populates="report_periods")
     student_reports = relationship("StudentReport", back_populates="period")
 
-    @classmethod
-    def get_waiting_student_reports(cls, db, contingent_person_id: int, filter: str = ""):
-        query = (
-            db.query(cls)
-            .join("project")
-            .outerjoin("student_reports")
-            .filter(Project.contingent_person_id == contingent_person_id)
-            .filter(cls.member_id.is_(None))
-        )
-
-        if filter == "all":
-            date = text("CURRENT_DATE()")
-            query = query.filter(
-                text("(finish_date < :date OR (start_date <= :date AND finish_date >= :date))")).params(date=date)
-        elif filter == "expired":
-            query = query.filter(cls.finish_date < text("CURRENT_DATE()"))
-        else:
-            query = query.filter(cls.start_date <= text("CURRENT_DATE()")).filter(
-                cls.finish_date >= text("CURRENT_DATE()"))
-
-        return query.order_by(cls.finish_date)
-
-    @classmethod
-    def by_id(cls, db, id: int):
-        return db.query(cls).filter(cls.id == id)
-
-    @classmethod
-    def by_project_id(cls, db, project_id: int):
-        return db.query(cls).filter(cls.project_id == project_id)
-
-    @classmethod
-    def by_start_date(cls, db, date: str, operator: str):
-        return db.query(cls).filter(text(f"start_date {operator} :date")).params(date=date)
+    # @classmethod
+    # def get_waiting_student_reports(cls, db, contingent_person_id: int, filter: str = ""):
+    #     query = (
+    #         db.query(cls)
+    #         .join("project")
+    #         .outerjoin("student_reports")
+    #         .filter(Project.contingent_person_id == contingent_person_id)
+    #         .filter(cls.member_id.is_(None))
+    #     )
+    #
+    #     if filter == "all":
+    #         date = text("CURRENT_DATE()")
+    #         query = query.filter(
+    #             text("(finish_date < :date OR (start_date <= :date AND finish_date >= :date))")).params(date=date)
+    #     elif filter == "expired":
+    #         query = query.filter(cls.finish_date < text("CURRENT_DATE()"))
+    #     else:
+    #         query = query.filter(cls.start_date <= text("CURRENT_DATE()")).filter(
+    #             cls.finish_date >= text("CURRENT_DATE()"))
+    #
+    #     return query.order_by(cls.finish_date)
+    #
+    # @classmethod
+    # def by_id(cls, db, id: int):
+    #     return db.query(cls).filter(cls.id == id)
+    #
+    # @classmethod
+    # def by_project_id(cls, db, project_id: int):
+    #     return db.query(cls).filter(cls.project_id == project_id)
+    #
+    # @classmethod
+    # def by_start_date(cls, db, date: str, operator: str):
+    #     return db.query(cls).filter(text(f"start_date {operator} :date")).params(date=date)
 
 
 class ProjectRole(Base):
@@ -164,11 +168,14 @@ class Role(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True, nullable=False)
-    creator_id = Column(Integer, ForeignKey("users.id"))
-    updater_id = Column(Integer, ForeignKey("users.id"))
+
+    # creator_id = Column(Integer, ForeignKey("users.id"))
+    # updater_id = Column(Integer, ForeignKey("users.id"))
+
     icon_id = Column(Integer, ForeignKey("role_icons.id"), nullable=True)
-    created_at = Column(text, default=text("(now() at time zone 'utc')"))
-    updated_at = Column(text, default=text("(now() at time zone 'utc')"))
+
+    # created_at = Column(text, default=text("(now() at time zone 'utc')"))
+    # updated_at = Column(text, default=text("(now() at time zone 'utc')"))
 
     icon = relationship("RoleIcon", back_populates="roles")
 
@@ -178,11 +185,12 @@ class RoleIcon(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     filename = Column(String, index=True)
-    creator_id = Column(Integer, ForeignKey("users.id"))
-    updater_id = Column(Integer, ForeignKey("users.id"))
 
-    created_at = Column('createdAt', datetime, default=datetime.utcnow)
-    updated_at = Column('updatedAt', datetime, default=datetime.utcnow)
+    # creator_id = Column(Integer, ForeignKey("users.id"))
+    # updater_id = Column(Integer, ForeignKey("users.id"))
+
+    # created_at = Column('createdAt', datetime, default=datetime.utcnow)
+    # updated_at = Column('updatedAt', datetime, default=datetime.utcnow)
 
     def get_file_name(self) -> str:
         return f"{self.id}.svg"
@@ -192,27 +200,6 @@ class StudentSubjectArea(Base):
     __tablename__ = 'student_subject_area'
     student_id = Column(Integer, ForeignKey('students.id'), primary_key=True)
     subject_area_id = Column(Integer, ForeignKey('subject_areas.id'), primary_key=True)
-
-
-class Subscriber(Base):
-    __tablename__ = "company_subscriber"
-
-    id = Column(Integer, primary_key=True, index=True)
-    company_id = Column(Integer, index=True)
-    student_id = Column(Integer, index=True)
-
-    def __repr__(self):
-        return f"<{self.__class__.__name__} id={self.id}>"
-
-    @classmethod
-    def by_company_id(cls, db, company_id: int):
-        return db.query(cls).filter(cls.company_id == company_id).all()
-
-    @classmethod
-    def by_student_id_and_company_id(cls, db, student_id: int, company_id: int):
-        return db.query(cls).filter(
-            cls.student_id == student_id, cls.company_id == company_id
-        ).first()
 
 
 class TypeActivity(Base):

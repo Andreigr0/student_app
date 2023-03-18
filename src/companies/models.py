@@ -4,6 +4,8 @@ from sqlalchemy.orm import relationship
 from app.database import Base
 import enum
 
+from app.utils import TimestampMixin
+
 
 class CompanyEmployeeCount(enum.Enum):
     small = (0, '<20')
@@ -21,7 +23,7 @@ class CompanyStatus(enum.Enum):
     blocked = (5, 'Заблокирована')
 
 
-class CompanyModel(Base):
+class CompanyModel(Base, TimestampMixin):
     __tablename__ = "companies"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -41,17 +43,16 @@ class CompanyModel(Base):
 
     # creator_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     # updater_id = Column(Integer, ForeignKey("users.id"), nullable=True)
-    created_at = Column(Integer, nullable=True)
-    updated_at = Column(Integer, nullable=True)
 
     contacts = relationship('ContactModel', back_populates="company")
+    subscribers = relationship('CompaniesSubscribersModel', back_populates="company")
 
     # search_vector = Column(
     #     TSVectorType("name", "description", "site"),
     #     nullable=True,
     #     index=True,
     # )
-
+    #
     # type_activities = relationship(
     #     "TypeActivity", secondary="company_type_activity", back_populates="companies"
     # )
@@ -106,3 +107,23 @@ class ContactModel(Base):
     # updater_id = Column(Integer, ForeignKey('users.id'), nullable=True)
     # created_at = Column(Integer)
     # updated_at = Column(Integer)
+
+
+class CompaniesSubscribersModel(Base):
+    __tablename__ = "company_subscriber"
+
+    company_id = Column(Integer, ForeignKey('companies.id'), primary_key=True)
+    student_id = Column(Integer, ForeignKey('students.id'), primary_key=True)
+
+    company = relationship(CompanyModel, back_populates='subscribers')
+    student = relationship('StudentModel', back_populates='subscribed_companies')
+
+    # @classmethod
+    # def by_company_id(cls, db, company_id: int):
+    #     return db.query(cls).filter(cls.company_id == company_id).all()
+    #
+    # @classmethod
+    # def by_student_id_and_company_id(cls, db, student_id: int, company_id: int):
+    #     return db.query(cls).filter(
+    #         cls.student_id == student_id, cls.company_id == company_id
+    #     ).first()
