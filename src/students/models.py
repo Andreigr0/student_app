@@ -2,10 +2,10 @@ from sqlalchemy import Column, Integer, Text, String, Boolean, func, TIMESTAMP
 from sqlalchemy.orm import relationship
 
 from app.database import Base
-from app.utils import TimestampMixin
+from app.utils import TimestampMixin, EditorMixin
 
 
-class StudentModel(Base, TimestampMixin):
+class StudentModel(Base, TimestampMixin, EditorMixin):
     __tablename__ = "students"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -17,9 +17,6 @@ class StudentModel(Base, TimestampMixin):
     is_full_feedback = Column(Boolean, default=False)
 
     subscribed_companies = relationship('CompaniesSubscribersModel', back_populates="student")
-
-    # creator_id = Column(Integer, nullable=True)
-    # updater_id = Column(Integer, nullable=True)
 
     # competencies = relationship("CompetenceModel", secondary="student_competence")
     # subject_areas = relationship("SubjectArea", secondary="student_subject_area")
