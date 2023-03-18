@@ -16,3 +16,18 @@ class CompetenceModel(Base):
     # @classmethod
     # def by_contingent_id(cls, db, contingent_id: int):
     #     return db.query(cls).filter(cls.students.any(contingent_person_id=contingent_id)).all()
+
+
+class SubjectAreaModel(Base):
+    __tablename__ = 'subject_areas'
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(255), nullable=False)
+    # creator_id = Column(Integer, ForeignKey('users.id'))
+    # updater_id = Column(Integer, ForeignKey('users.id'))
+
+    # students = relationship('Student', secondary=StudentSubjectArea.__tablename__)
+
+    # @classmethod
+    # def by_contingent_id(cls, db, contingent_id: int):
+    #     return cls.query.join(cls.students).filter(Student.contingent_person_id == contingent_id)

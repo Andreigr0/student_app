@@ -159,38 +159,6 @@ class ProjectStage(Base):
     project = relationship("Project", back_populates="stages")
 
 
-class ProjectStatus(Base):
-    __tablename__ = "project_statuses"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(255), nullable=False)
-    value = Column(Integer, nullable=False, unique=True)
-    description = Column(String(255))
-
-    @hybrid_property
-    def label(self) -> str:
-        return ProjectStatusEnum(self.value).label()
-
-
-class ProjectType(Base):
-    __tablename__ = "project_types"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    type = Column(Enum(ProjectTypeEnum), nullable=False)
-
-    @staticmethod
-    def map():
-        return {e.value: e.name for e in ProjectTypeEnum}
-
-    @staticmethod
-    def values():
-        return [e.value for e in ProjectTypeEnum]
-
-    def label(self):
-        return self.type.name
-
-
 class Role(Base):
     __tablename__ = "roles"
 
@@ -224,21 +192,6 @@ class StudentSubjectArea(Base):
     __tablename__ = 'student_subject_area'
     student_id = Column(Integer, ForeignKey('students.id'), primary_key=True)
     subject_area_id = Column(Integer, ForeignKey('subject_areas.id'), primary_key=True)
-
-
-class SubjectArea(Base, HasUserStampsTrait):
-    __tablename__ = 'subject_areas'
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(255))
-    creator_id = Column(Integer, ForeignKey('users.id'))
-    updater_id = Column(Integer, ForeignKey('users.id'))
-
-    students = relationship('Student', secondary=StudentSubjectArea.__tablename__)
-
-    @classmethod
-    def by_contingent_id(cls, db, contingent_id: int):
-        return cls.query.join(cls.students).filter(Student.contingent_person_id == contingent_id)
 
 
 class Subscriber(Base):

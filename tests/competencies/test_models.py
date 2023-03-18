@@ -1,4 +1,4 @@
-from competencies.models import CompetenceModel
+from competencies.models import CompetenceModel, SubjectAreaModel
 
 
 def test_create_competence(db_test, faker):
@@ -7,3 +7,14 @@ def test_create_competence(db_test, faker):
     db_test.commit()
     assert competence.id is not None
     assert competence.name is not None
+
+
+def test_create_subject_area_model(db_test, faker):
+    subject_area = SubjectAreaModel(
+        name='name',
+    )
+    db_test.add(subject_area)
+    db_test.commit()
+
+    assert subject_area.id is not None
+    assert subject_area.name == 'name'
