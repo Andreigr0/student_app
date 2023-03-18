@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from app.database import Base
 import enum
 
-from app.utils import TimestampMixin
+from app.utils import TimestampMixin, EditorMixin
 
 
 class CompanyEmployeeCount(enum.Enum):
@@ -27,60 +27,25 @@ class CompanyModel(Base, TimestampMixin):
     __tablename__ = "companies"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
     email = Column(String, index=True, unique=True)
-    has_accreditation = Column(Boolean, default=False)
-    site = Column(String, nullable=True)
-    description = Column(String, nullable=True)
-    logo = Column(String, nullable=True)
-    inn = Column(Integer, nullable=True)
+    name = Column(String, nullable=False)
+    inn = Column(Integer, nullable=True, unique=True)
+    has_accreditation = Column(Boolean, default=False, nullable=False)
+    site = Column(String)
+    logo = Column(String)
+    description = Column(String)
     employee_count = Column(Enum(CompanyEmployeeCount), nullable=False)
     status = Column(Enum(CompanyStatus), nullable=False, default=CompanyStatus.recent)
-    reason_rejection = Column(String, nullable=True)
-
-    # representative_id = Column(Integer, ForeignKey("representatives.id"), nullable=True)
+    reason_rejection = Column(String)
     active_project_count = Column(Integer, default=0)
-
-    # creator_id = Column(Integer, ForeignKey("users.id"), nullable=True)
-    # updater_id = Column(Integer, ForeignKey("users.id"), nullable=True)
 
     contacts = relationship('ContactModel', back_populates="company")
     subscribers = relationship('CompaniesSubscribersModel', back_populates="company")
 
-    # search_vector = Column(
-    #     TSVectorType("name", "description", "site"),
-    #     nullable=True,
-    #     index=True,
-    # )
-    #
     # type_activities = relationship(
     #     "TypeActivity", secondary="company_type_activity", back_populates="companies"
     # )
-    # subscribers = relationship(
-    #     "Student", secondary="company_subscriber", back_populates="subscribed_companies"
-    # )
     # projects = relationship("Project", back_populates="company")
-    # contacts = relationship("Contact", back_populates="company")
-    #
-    # @classmethod
-    # def by_id(cls, db, company_id: int):
-    #     return db.query(cls).filter(cls.id == company_id).first()
-    #
-    # @classmethod
-    # def by_email(cls, db, email: str):
-    #     return db.query(cls).filter(cls.email == email).first()
-    #
-    # @classmethod
-    # def by_representative_id(cls, db, representative_id: int):
-    #     return db.query(cls).filter(cls.representative_id == representative_id).first()
-    #
-    # @classmethod
-    # def by_active_status(cls, db):
-    #     return db.query(cls).filter(cls.status == 1)
-    #
-    # @classmethod
-    # def filter(cls, db, query_filter):
-    #     return query_filter.apply(db.query(cls))
 
 
 class ContactCommunicationType(str, enum.Enum):
@@ -118,12 +83,11 @@ class CompaniesSubscribersModel(Base):
     company = relationship(CompanyModel, back_populates='subscribers')
     student = relationship('StudentModel', back_populates='subscribed_companies')
 
-    # @classmethod
-    # def by_company_id(cls, db, company_id: int):
-    #     return db.query(cls).filter(cls.company_id == company_id).all()
-    #
-    # @classmethod
-    # def by_student_id_and_company_id(cls, db, student_id: int, company_id: int):
-    #     return db.query(cls).filter(
-    #         cls.student_id == student_id, cls.company_id == company_id
-    #     ).first()
+
+class TypeActivityModel(Base, TimestampMixin, EditorMixin):
+    __tablename__ = "type_activity"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False, unique=True)
+
+    # students = relationship("Student", back_populates="type_activity")

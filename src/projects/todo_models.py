@@ -150,12 +150,3 @@ class StudentSubjectArea(Base):
     student_id = Column(Integer, ForeignKey('students.id'), primary_key=True)
     subject_area_id = Column(Integer, ForeignKey('subject_areas.id'), primary_key=True)
 
-
-class TypeActivity(Base):
-    __tablename__ = "type_activity"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-
-    # Define the relationship to Student model
-    students = relationship("Student", back_populates="type_activity")

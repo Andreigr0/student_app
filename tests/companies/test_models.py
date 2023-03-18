@@ -1,5 +1,5 @@
 from companies.models import CompanyModel, CompanyEmployeeCount, CompanyStatus, ContactModel, ContactCommunicationType, \
-    CompaniesSubscribersModel
+    CompaniesSubscribersModel, TypeActivityModel
 from students.models import StudentModel
 
 
@@ -66,3 +66,15 @@ def test_create_subscription(db_test, create_company_model):
 
     assert len(student.subscribed_companies) == 1
     assert student.subscribed_companies[0].company == company
+
+
+def test_create_type_activity(db_test, faker):
+    type_activity = TypeActivityModel(
+        name='Name',
+    )
+
+    db_test.add(type_activity)
+    db_test.commit()
+
+    assert type_activity.id is not None
+    assert type_activity.name == 'Name'
