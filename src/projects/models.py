@@ -87,6 +87,8 @@ class ProjectModel(Base, TimestampMixin):
     # updater_id = Column(Integer)
 
     stages = relationship("ProjectStageModel", back_populates="project")
+    managers = relationship("ProjectsManagersModel", back_populates="project")
+
     # company = relationship("Company", back_populates="projects")
     # subject_areas = relationship("SubjectArea", secondary="project_subject_area")
     # partners = relationship("Company", secondary="partners")
@@ -108,3 +110,14 @@ class ProjectStageModel(Base, TimestampMixin):  # todo: add UserMixin
     finish_date = Column(TIMESTAMP, nullable=False)
 
     project = relationship(ProjectModel, back_populates="stages")
+
+
+class ProjectsManagersModel(Base, TimestampMixin):
+    __tablename__ = "project_managers"
+
+    participant = Column(Enum(ProjectParticipant), nullable=False)
+    project_id = Column(Integer, ForeignKey("projects.id"), primary_key=True)
+    contact_id = Column(Integer, ForeignKey("contacts.id"), primary_key=True)
+
+    project = relationship(ProjectModel, back_populates="managers")
+    contact = relationship("ContactModel", back_populates="projects")

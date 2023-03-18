@@ -1,5 +1,6 @@
+from companies.models import ContactModel, CompanyModel
 from projects.models import ProjectModel, ProjectParticipant, ProjectRoleCompetenceType, ProjectRoleWorkFormatEnum, \
-    ProjectStatusEnum, ProjectTypeEnum, ProjectView, ProjectStageModel
+    ProjectStatusEnum, ProjectTypeEnum, ProjectView, ProjectStageModel, ProjectsManagersModel
 import datetime
 
 
@@ -45,3 +46,20 @@ def test_create_project_stage_model(db_test, create_project_model):
     assert stage.start_date == start_date
     assert stage.finish_date == finish_date
     assert stage.project == project
+
+
+def test_create_project_managers_model(db_test, create_project_model, create_company_model):
+    project, _ = create_project_model()
+
+    company = create_company_model()
+    contact = ContactModel(fio='test', company_id=company.id)
+
+    project_managers = ProjectsManagersModel(participant=ProjectParticipant.Head)
+    project_managers.contact = contact
+    project.managers.append(project_managers)
+
+    db_test.add(project)
+    db_test.commit()
+
+    assert project.managers[0].contact == contact
+    assert project.managers[0].participant == ProjectParticipant.Head

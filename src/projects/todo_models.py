@@ -30,19 +30,6 @@ member_review_competence_table = Table(
 )
 
 
-class ProjectManager(Base, TimestampMixin):
-    __tablename__ = "project_managers"
-
-    id = Column(Integer, primary_key=True, index=True)
-    participant = Column(Enum(ProjectParticipant), nullable=False)
-
-    project_id = Column(Integer, ForeignKey("projects.id"))
-    contact_id = Column(Integer, ForeignKey("contacts.id"))
-
-    project = relationship("Project", back_populates="managers")
-    contact = relationship("Contact", back_populates="projects")
-
-
 class ProjectReportPeriod(Base, TimestampMixin):  # todo: add UserStampMixin
     __tablename__ = "project_report_periods"
 
@@ -77,18 +64,6 @@ class ProjectReportPeriod(Base, TimestampMixin):  # todo: add UserStampMixin
     #             cls.finish_date >= text("CURRENT_DATE()"))
     #
     #     return query.order_by(cls.finish_date)
-    #
-    # @classmethod
-    # def by_id(cls, db, id: int):
-    #     return db.query(cls).filter(cls.id == id)
-    #
-    # @classmethod
-    # def by_project_id(cls, db, project_id: int):
-    #     return db.query(cls).filter(cls.project_id == project_id)
-    #
-    # @classmethod
-    # def by_start_date(cls, db, date: str, operator: str):
-    #     return db.query(cls).filter(text(f"start_date {operator} :date")).params(date=date)
 
 
 class ProjectRole(Base):

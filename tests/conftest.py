@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app.database import get_db
 from app.core.config import Settings
+from companies.models import CompanyModel, CompanyEmployeeCount, CompanyStatus
 
 logger = logging.getLogger(__name__)
 
@@ -102,3 +103,25 @@ def test_client_auth(get_db_override, testing_engine, monkey_session):
 #         return user
 #
 #     return _create_user
+
+
+@pytest.fixture
+def create_company_model(db_test, faker):
+    def _create() -> CompanyModel:
+        company = CompanyModel(
+            name='Company 1',
+            email='email@email.com',
+            has_accreditation=True,
+            site=faker.url(),
+            description=faker.text(),
+            logo=faker.url(),
+            inn=faker.random_int(),
+            employee_count=CompanyEmployeeCount.small,
+            status=CompanyStatus.moderation,
+            reason_rejection=faker.text(),
+        )
+        db_test.add(company)
+        db_test.commit()
+        return company
+
+    return _create

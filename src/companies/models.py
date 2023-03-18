@@ -64,6 +64,7 @@ class ContactModel(Base, TimestampMixin, EditorMixin):
 
     company_id = Column(Integer, ForeignKey('companies.id'), nullable=False)
     company = relationship(CompanyModel, back_populates='contacts')
+    projects = relationship("ProjectsManagersModel", back_populates="contact")
 
 
 class CompaniesSubscribersModel(Base):
