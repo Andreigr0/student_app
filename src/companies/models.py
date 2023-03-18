@@ -42,7 +42,7 @@ class CompanyModel(Base, TimestampMixin, EditorMixin):
     contacts = relationship('ContactModel', back_populates="company")
     subscribers = relationship('CompaniesSubscribersModel', back_populates="company")
     type_activities = relationship("CompanyTypeActivitiesModel", back_populates="company")
-    # projects = relationship("Project", back_populates="company")
+    projects = relationship("ProjectModel", back_populates="company")
 
 
 class ContactCommunicationType(str, enum.Enum):

@@ -4,7 +4,7 @@ from sqlalchemy import Column, Integer, String, Boolean, Enum, TIMESTAMP, Foreig
 from sqlalchemy.orm import relationship
 
 from app.database import Base
-from app.utils import TimestampMixin
+from app.utils import TimestampMixin, EditorMixin
 
 
 class ProjectParticipant(enum.Enum):
@@ -59,11 +59,11 @@ class ProjectView(enum.Enum):
     GPO = (2, 'ГПО')
 
 
-class ProjectModel(Base, TimestampMixin):
+class ProjectModel(Base, TimestampMixin, EditorMixin):
     __tablename__ = 'projects'
 
     id = Column(Integer, primary_key=True)
-    # company_id = Column(Integer, ForeignKey('companies.id'))
+    company_id = Column(Integer, ForeignKey('companies.id'), nullable=False)
 
     name = Column(String(255), nullable=False)
     is_visible = Column(Boolean, default=True)
@@ -83,17 +83,14 @@ class ProjectModel(Base, TimestampMixin):
     reason_rejection = Column(String)
     application_date = Column(TIMESTAMP)
 
-    # creator_id = Column(Integer)
-    # updater_id = Column(Integer)
-
+    company = relationship("CompanyModel", back_populates="projects")
     stages = relationship("ProjectStageModel", back_populates="project")
     managers = relationship("ProjectsManagersModel", back_populates="project")
 
-    # company = relationship("Company", back_populates="projects")
+    # report_periods = relationship("ProjectsReportPeriodsModel", back_populates="project")
     # subject_areas = relationship("SubjectArea", secondary="project_subject_area")
     # partners = relationship("Company", secondary="partners")
     # roles = relationship("ProjectRole", back_populates="project")
-    # report_periods = relationship("ProjectReportPeriod", back_populates="project")
     # members = relationship("Member", back_populates="project")
     # bids = relationship("Bid", secondary="project_roles")
     # curator = relationship("Curator", back_populates="project")

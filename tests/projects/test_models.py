@@ -23,6 +23,7 @@ def test_create_project_model(db_test, create_project_model):
     assert project.report == 'report'
     assert project.reason_rejection == 'reason_rejection'
     assert project.application_date == now
+    assert project.company_id == 1
 
 
 def test_create_project_stage_model(db_test, create_project_model):

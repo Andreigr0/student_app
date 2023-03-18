@@ -30,42 +30,6 @@ member_review_competence_table = Table(
 )
 
 
-class ProjectReportPeriod(Base, TimestampMixin):  # todo: add UserStampMixin
-    __tablename__ = "project_report_periods"
-
-    id = Column(Integer, primary_key=True, index=True)
-    project_id = Column(Integer, ForeignKey("projects.id", ondelete="CASCADE"), index=True)
-
-    name = Column(String, nullable=False)
-    start_date = Column(String, nullable=False)
-    finish_date = Column(String, nullable=False)
-
-    project = relationship("Project", back_populates="report_periods")
-    student_reports = relationship("StudentReport", back_populates="period")
-
-    # @classmethod
-    # def get_waiting_student_reports(cls, db, contingent_person_id: int, filter: str = ""):
-    #     query = (
-    #         db.query(cls)
-    #         .join("project")
-    #         .outerjoin("student_reports")
-    #         .filter(Project.contingent_person_id == contingent_person_id)
-    #         .filter(cls.member_id.is_(None))
-    #     )
-    #
-    #     if filter == "all":
-    #         date = text("CURRENT_DATE()")
-    #         query = query.filter(
-    #             text("(finish_date < :date OR (start_date <= :date AND finish_date >= :date))")).params(date=date)
-    #     elif filter == "expired":
-    #         query = query.filter(cls.finish_date < text("CURRENT_DATE()"))
-    #     else:
-    #         query = query.filter(cls.start_date <= text("CURRENT_DATE()")).filter(
-    #             cls.finish_date >= text("CURRENT_DATE()"))
-    #
-    #     return query.order_by(cls.finish_date)
-
-
 class ProjectRole(Base):
     __tablename__ = "project_roles"
 

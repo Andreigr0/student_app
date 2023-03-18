@@ -1,3 +1,4 @@
+import datetime
 import logging
 import os
 import pathlib
@@ -11,6 +12,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from app.database import get_db
 from app.core.config import Settings
 from companies.models import CompanyModel, CompanyEmployeeCount, CompanyStatus
+from projects.models import ProjectModel, ProjectTypeEnum, ProjectView, ProjectStatusEnum
 
 logger = logging.getLogger(__name__)
 
@@ -110,7 +112,7 @@ def create_company_model(db_test, faker):
     def _create() -> CompanyModel:
         company = CompanyModel(
             name='Company 1',
-            email='email@email.com',
+            email=faker.email(),
             has_accreditation=True,
             site=faker.url(),
             description=faker.text(),
@@ -123,5 +125,35 @@ def create_company_model(db_test, faker):
         db_test.add(company)
         db_test.commit()
         return company
+
+    return _create
+
+
+@pytest.fixture
+def create_project_model(db_test, faker, create_company_model):
+    def _create() -> (ProjectModel, datetime.datetime):
+        company = create_company_model()
+        now = datetime.datetime.now()
+        project = ProjectModel(
+            name='test',
+            is_visible=True,
+            type=ProjectTypeEnum.Research,
+            view=ProjectView.DigitalAcademy,
+            status=ProjectStatusEnum.Done,
+            description='description',
+            problem='problem',
+            purpose='purpose',
+            task='task',
+            result='result',
+            what_will_get='what_will_get',
+            total='total',
+            report='report',
+            reason_rejection='reason_rejection',
+            application_date=now,
+            company_id=company.id,
+        )
+        db_test.add(project)
+        db_test.commit()
+        return project, now
 
     return _create

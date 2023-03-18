@@ -8,7 +8,7 @@ def test_create_company_model(create_company_model):
 
     assert company.id is not None
     assert company.name == 'Company 1'
-    assert company.email == 'email@email.com'
+    assert company.email is not None
     assert company.has_accreditation is True
     assert company.employee_count == CompanyEmployeeCount.small
     assert company.status == CompanyStatus.moderation
