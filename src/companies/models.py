@@ -41,10 +41,7 @@ class CompanyModel(Base, TimestampMixin, EditorMixin):
 
     contacts = relationship('ContactModel', back_populates="company")
     subscribers = relationship('CompaniesSubscribersModel', back_populates="company")
-
-    # type_activities = relationship(
-    #     "TypeActivity", secondary="company_type_activity", back_populates="companies"
-    # )
+    type_activities = relationship("CompanyTypeActivitiesModel", back_populates="company")
     # projects = relationship("Project", back_populates="company")
 
 
@@ -85,4 +82,15 @@ class TypeActivityModel(Base, TimestampMixin, EditorMixin):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False, unique=True)
 
+    companies = relationship("CompanyTypeActivitiesModel", back_populates="type_activity")
     # students = relationship("Student", back_populates="type_activity")
+
+
+class CompanyTypeActivitiesModel(Base):
+    __tablename__ = "company_type_activity"
+
+    company_id = Column(Integer, ForeignKey('companies.id'), primary_key=True)
+    type_activity_id = Column(Integer, ForeignKey('type_activity.id'), primary_key=True)
+
+    company = relationship(CompanyModel, back_populates='type_activities')
+    type_activity = relationship(TypeActivityModel, back_populates='companies')

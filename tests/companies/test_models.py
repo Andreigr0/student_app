@@ -1,5 +1,5 @@
 from companies.models import CompanyModel, CompanyEmployeeCount, CompanyStatus, ContactModel, ContactCommunicationType, \
-    CompaniesSubscribersModel, TypeActivityModel
+    CompaniesSubscribersModel, TypeActivityModel, CompanyTypeActivitiesModel
 from students.models import StudentModel
 
 
@@ -50,7 +50,7 @@ def test_create_subscription(db_test, create_company_model):
         is_full_feedback=True,
     )
 
-    company_subscription = CompaniesSubscribersModel();
+    company_subscription = CompaniesSubscribersModel()
     company_subscription.company = company
     student.subscribed_companies.append(company_subscription)
 
@@ -69,12 +69,25 @@ def test_create_subscription(db_test, create_company_model):
 
 
 def test_create_type_activity(db_test, faker):
-    type_activity = TypeActivityModel(
-        name='Name',
-    )
+    type_activity = TypeActivityModel(name='Name')
 
     db_test.add(type_activity)
     db_test.commit()
 
     assert type_activity.id is not None
     assert type_activity.name == 'Name'
+
+
+def test_create_company_type_activity(db_test, create_company_model):
+    company = create_company_model()
+    type_activity = TypeActivityModel(name='Name')
+
+    company_type_activity = CompanyTypeActivitiesModel()
+    company_type_activity.type_activity = type_activity
+    company.type_activities.append(company_type_activity)
+
+    db_test.add(company)
+    db_test.commit()
+
+    assert company.id is not None
+    assert company.type_activities[0].type_activity.name == 'Name'
