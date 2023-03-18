@@ -1,6 +1,6 @@
 from companies.models import CompanyModel, ContactModel, CompaniesSubscribersModel, TypeActivityModel
 from bids.models import BidModel
-from competencies.models import CompetenceModel
+from competencies.models import CompetencyModel, SubjectAreaModel
 from invitations.models import InvitationModel
 from students.models import StudentModel
 from reports.models import StudentReportModel

@@ -18,8 +18,8 @@ class StudentModel(Base, TimestampMixin, EditorMixin):
 
     subscribed_companies = relationship('CompaniesSubscribersModel', back_populates="student")
     subject_areas = relationship('StudentsSubjectAreasModel', back_populates="student")
+    competencies = relationship('StudentsCompetenciesModel', back_populates="student")
 
-    # competencies = relationship("CompetenceModel", secondary="student_competence")
     # reviews = relationship("MemberReview",
     #                        primaryjoin="Student.contingent_person_id == MemberReview.contingent_person_id")
     # projects = relationship("Project", secondary="members")
@@ -40,3 +40,13 @@ class StudentsSubjectAreasModel(Base):
 
     student = relationship(StudentModel, back_populates='subject_areas')
     subject_area = relationship('SubjectAreaModel', back_populates='students')
+
+
+class StudentsCompetenciesModel(Base):
+    __tablename__ = 'student_competence'
+
+    student_id = Column(Integer, ForeignKey('students.id', ondelete='CASCADE'), primary_key=True)
+    competency_id = Column(Integer, ForeignKey('competencies.id', ondelete='CASCADE'), primary_key=True)
+
+    student = relationship(StudentModel, back_populates='competencies')
+    competency = relationship('CompetencyModel', back_populates='students')
