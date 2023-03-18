@@ -1,6 +1,7 @@
 import enum
 
-from sqlalchemy import Column, Integer, String, Boolean, Enum, TIMESTAMP
+from sqlalchemy import Column, Integer, String, Boolean, Enum, TIMESTAMP, ForeignKey
+from sqlalchemy.orm import relationship
 
 from app.database import Base
 from app.utils import TimestampMixin
@@ -85,12 +86,25 @@ class ProjectModel(Base, TimestampMixin):
     # creator_id = Column(Integer)
     # updater_id = Column(Integer)
 
+    stages = relationship("ProjectStageModel", back_populates="project")
     # company = relationship("Company", back_populates="projects")
     # subject_areas = relationship("SubjectArea", secondary="project_subject_area")
     # partners = relationship("Company", secondary="partners")
     # roles = relationship("ProjectRole", back_populates="project")
-    # stages = relationship("ProjectStage", back_populates="project")
     # report_periods = relationship("ProjectReportPeriod", back_populates="project")
     # members = relationship("Member", back_populates="project")
     # bids = relationship("Bid", secondary="project_roles")
     # curator = relationship("Curator", back_populates="project")
+
+
+class ProjectStageModel(Base, TimestampMixin):  # todo: add UserMixin
+    __tablename__ = "project_stage"
+
+    id = Column(Integer, primary_key=True, index=True)
+    project_id = Column(Integer, ForeignKey("projects.id"), nullable=False)
+
+    name = Column(String, nullable=False)
+    start_date = Column(TIMESTAMP, nullable=False)
+    finish_date = Column(TIMESTAMP, nullable=False)
+
+    project = relationship(ProjectModel, back_populates="stages")

@@ -1,7 +1,7 @@
 # from app.models.competence import competence_project_role
 # from app.models.enums import ProjectRoleCompetenceType
 # from app.models.mixins import TimestampMixin, UserStampMixin
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, func, Enum, Table, Text
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, func, Enum, Table, Text, TIMESTAMP
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import text
 from enum import Enum as PyEnum
@@ -9,20 +9,17 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime, tex
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
+from app.utils import TimestampMixin
 
 
 class Curator(Base):
     __tablename__ = "curators"
 
-    id = Column(Integer, primary_key=True, index=True)
-    project_id = Column(Integer, ForeignKey("projects.id"))
-    curator_id = Column(Integer, ForeignKey("users.id"))
+    project_id = Column(Integer, ForeignKey("projects.id"), primary_key=True)
+    curator_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
 
-    project = relationship("Project", back_populates="curators")
-
-
-# Index("invite_contingent_person_id_index", Invite.contingent_person_id)
-# Index("invite_project_role_id_index", Invite.project_role_id)
+    project = relationship("ProjectModel", back_populates="curators")
+    curator = relationship("UserModel", back_populates="curated_projects")
 
 
 member_review_competence_table = Table(
@@ -33,23 +30,20 @@ member_review_competence_table = Table(
 )
 
 
-class ProjectManager(Base):
+class ProjectManager(Base, TimestampMixin):
     __tablename__ = "project_managers"
 
     id = Column(Integer, primary_key=True, index=True)
-    project_id = Column(Integer, ForeignKey("projects.id"))
-    contact_id = Column(Integer, ForeignKey("contacts.id"))
-
     participant = Column(Enum(ProjectParticipant), nullable=False)
 
-    # created_at = Column(func.now())
-    # updated_at = Column(func.now(), onupdate=func.now())
+    project_id = Column(Integer, ForeignKey("projects.id"))
+    contact_id = Column(Integer, ForeignKey("contacts.id"))
 
     project = relationship("Project", back_populates="managers")
     contact = relationship("Contact", back_populates="projects")
 
 
-class ProjectReportPeriod(Base):
+class ProjectReportPeriod(Base, TimestampMixin):  # todo: add UserStampMixin
     __tablename__ = "project_report_periods"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -58,11 +52,6 @@ class ProjectReportPeriod(Base):
     name = Column(String, nullable=False)
     start_date = Column(String, nullable=False)
     finish_date = Column(String, nullable=False)
-
-    # creator_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=True)
-    # updater_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=True)
-    # created_at = Column(Integer, index=True)
-    # updated_at = Column(Integer, index=True)
 
     project = relationship("Project", back_populates="report_periods")
     student_reports = relationship("StudentReport", back_populates="period")
@@ -108,89 +97,49 @@ class ProjectRole(Base):
     id = Column(Integer, primary_key=True, index=True)
     project_id = Column(Integer, ForeignKey("projects.id"))
     role_id = Column(Integer, ForeignKey("roles.id"))
+
     workload = Column(Integer)
     work_format = Column(Integer)
-
     type = Column(Enum(ProjectRoleCompetenceType), nullable=False)
 
     project = relationship("Project", back_populates="project_roles")
-    need_competencies = relationship("Competence", secondary="project_role_competence",
-                                     back_populates="need_project_roles")
-    will_competencies = relationship("Competence", secondary="project_role_competence",
-                                     back_populates="will_project_roles")
+    need_competencies = relationship("Competence", back_populates="need_project_roles")
+    will_competencies = relationship("Competence", back_populates="will_project_roles")
     role = relationship("Role", back_populates="project_roles")
     bids = relationship("Bid", back_populates="project_role")
 
-    @staticmethod
-    def suitable_by_contingent_person_id(company_id: int, contingent_person_id: int):
-        # from app.models import Invite, Member, Project, ProjectRoleCompetenceType
-        # from app.enums import InviteStatus, ProjectStatus
-
-        status_list = [f"'{status}'" for status in InviteStatus.get_passives()]
-        status_list = ",".join(status_list)
-
-        return (
-            ProjectRole.query
-            .join(Project)
-            .outerjoin(Invite, ((Invite.project_role_id == ProjectRole.id) & (
-                    Invite.contingent_person_id == contingent_person_id)))
-            .outerjoin(Member,
-                       ((Member.project_id == Project.id) & (Member.contingent_person_id == contingent_person_id)))
-            .filter(Member.id.is_(None))
-            .filter(Project.company_id == company_id)
-            .filter(Project.status == ProjectStatus.Open.value)
-            .filter((Invite.contingent_person_id.is_(None)) | (Invite.status.in_(status_list)))
-        )
-
-    @staticmethod
-    def by_id(project_role_id: int):
-        return ProjectRole.query.filter_by(id=project_role_id).first()
-
-
-class ProjectStage(Base):
-    __tablename__ = "project_stage"
-
-    id = Column(Integer, primary_key=True, index=True)
-    project_id = Column(String, ForeignKey("project.id"))
-    name = Column(String, index=True)
-    start_date = Column(DateTime)
-    finish_date = Column(DateTime)
-    creator_id = Column(Integer, ForeignKey(User.id))
-    updater_id = Column(Integer, ForeignKey(User.id))
-    created_at = Column(DateTime, nullable=False)
-    updated_at = Column(DateTime, nullable=False)
-
-    project = relationship("Project", back_populates="stages")
+    # @staticmethod
+    # def suitable_by_contingent_person_id(company_id: int, contingent_person_id: int):
+    #     # from app.models import Invite, Member, Project, ProjectRoleCompetenceType
+    #     # from app.enums import InviteStatus, ProjectStatus
+    #
+    #     status_list = [f"'{status}'" for status in InviteStatus.get_passives()]
+    #     status_list = ",".join(status_list)
+    #
+    #     return (
+    #         ProjectRole.query
+    #         .join(Project)
+    #         .outerjoin(Invite, ((Invite.project_role_id == ProjectRole.id) & (
+    #                 Invite.contingent_person_id == contingent_person_id)))
+    #         .outerjoin(Member,
+    #                    ((Member.project_id == Project.id) & (Member.contingent_person_id == contingent_person_id)))
+    #         .filter(Member.id.is_(None))
+    #         .filter(Project.company_id == company_id)
+    #         .filter(Project.status == ProjectStatus.Open.value)
+    #         .filter((Invite.contingent_person_id.is_(None)) | (Invite.status.in_(status_list)))
+    #     )
+    #
+    # @staticmethod
+    # def by_id(project_role_id: int):
+    #     return ProjectRole.query.filter_by(id=project_role_id).first()
 
 
-class Role(Base):
+class Role(Base, TimestampMixin):  # todo: add UserMixin
     __tablename__ = "roles"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True, nullable=False)
-
-    # creator_id = Column(Integer, ForeignKey("users.id"))
-    # updater_id = Column(Integer, ForeignKey("users.id"))
-
-    icon_id = Column(Integer, ForeignKey("role_icons.id"), nullable=True)
-
-    # created_at = Column(text, default=text("(now() at time zone 'utc')"))
-    # updated_at = Column(text, default=text("(now() at time zone 'utc')"))
-
-    icon = relationship("RoleIcon", back_populates="roles")
-
-
-class RoleIcon(Base):
-    __tablename__ = "role_icons"
-
-    id = Column(Integer, primary_key=True, index=True)
-    filename = Column(String, index=True)
-
-    # creator_id = Column(Integer, ForeignKey("users.id"))
-    # updater_id = Column(Integer, ForeignKey("users.id"))
-
-    # created_at = Column('createdAt', datetime, default=datetime.utcnow)
-    # updated_at = Column('updatedAt', datetime, default=datetime.utcnow)
+    name = Column(String, nullable=False)
+    filename = Column(String)
 
     def get_file_name(self) -> str:
         return f"{self.id}.svg"
