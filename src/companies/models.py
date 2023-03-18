@@ -23,7 +23,7 @@ class CompanyStatus(enum.Enum):
     blocked = (5, 'Заблокирована')
 
 
-class CompanyModel(Base, TimestampMixin):
+class CompanyModel(Base, TimestampMixin, EditorMixin):
     __tablename__ = "companies"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -54,7 +54,7 @@ class ContactCommunicationType(str, enum.Enum):
     telegram = "telegram"
 
 
-class ContactModel(Base):
+class ContactModel(Base, TimestampMixin, EditorMixin):
     __tablename__ = "contacts"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -67,11 +67,6 @@ class ContactModel(Base):
 
     company_id = Column(Integer, ForeignKey('companies.id'), nullable=False)
     company = relationship(CompanyModel, back_populates='contacts')
-
-    # creator_id = Column(Integer, ForeignKey('users.id'), nullable=True)
-    # updater_id = Column(Integer, ForeignKey('users.id'), nullable=True)
-    # created_at = Column(Integer)
-    # updated_at = Column(Integer)
 
 
 class CompaniesSubscribersModel(Base):
