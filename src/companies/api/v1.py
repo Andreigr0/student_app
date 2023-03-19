@@ -2,13 +2,14 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.tags import Tags
 from companies.models import CompanyModel
 from companies.schemas import Company, CompanyDetails
 from projects.schemas import Project
 
 router = APIRouter(
     prefix='/companies',
-    tags=['companies'],
+    tags=[Tags.companies],
 )
 
 

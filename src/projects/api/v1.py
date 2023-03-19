@@ -1,10 +1,11 @@
 from fastapi import APIRouter
 
+from app.tags import Tags
 from projects.schemas import Project, ProjectDetails, ParticipationCreate
 
 router = APIRouter(
     prefix='/projects',
-    tags=['projects'],
+    tags=[Tags.projects],
 )
 
 

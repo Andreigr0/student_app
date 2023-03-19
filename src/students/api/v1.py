@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from pydantic import Field
 
+from app.tags import Tags
 from projects.schemas import Project
 from reviews.schemas import Review
 from students.schemas import StudentCompetencies, StudentPortfolio, PublicStudent, PersonalStudent, \
@@ -8,11 +9,11 @@ from students.schemas import StudentCompetencies, StudentPortfolio, PublicStuden
 
 current_router = APIRouter(
     prefix='/student',
-    tags=['student'],
+    tags=[Tags.student],
 )
 public_router = APIRouter(
     prefix='/students',
-    tags=['students'],
+    tags=[Tags.students],
 )
 
 
