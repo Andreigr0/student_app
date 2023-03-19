@@ -1,14 +1,8 @@
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
 from pydantic import BaseModel
 
-
-class Competency(BaseModel):
-    id: int
-    name: str
-
-    class Config:
-        orm_mode = True
+from shared.schemas import ValueSchema
 
 
 class CompanyShort(BaseModel):
@@ -18,7 +12,7 @@ class CompanyShort(BaseModel):
 
 
 class Company(CompanyShort):
-    # competencies: list[Competency]
+    competencies: list[ValueSchema]
     has_accreditation: bool
     active_project_count: int
     total_project_count: int | None
