@@ -1,6 +1,8 @@
 from companies.models import ContactModel, CompanyModel
-from projects.models import ProjectModel, ProjectParticipant, ProjectRoleCompetenceType, ProjectRoleWorkFormatEnum, \
-    ProjectStatusEnum, ProjectTypeEnum, ProjectView, ProjectStageModel, ProjectsManagersModel, ProjectsCuratorsModel
+from competencies.models import CompetencyModel
+from projects.models import ProjectModel, ProjectParticipant, ProjectRoleWorkFormatEnum, \
+    ProjectStatusEnum, ProjectTypeEnum, ProjectView, ProjectStageModel, ProjectsManagersModel, ProjectsCuratorsModel, \
+    ProjectRoleModel
 import datetime
 
 
@@ -80,3 +82,36 @@ def test_create_projects_curators_model(db_test, create_project_model, create_us
 
     assert project.curators[0].curator == user
     assert project.curators[0].project == project
+
+
+def test_create_project_role_model(db_test, create_project_model, faker):
+    project, _ = create_project_model()
+    need_competence = CompetencyModel(name=faker.word())
+    will_competence = CompetencyModel(name=faker.word())
+
+    role = ProjectRoleModel(
+        project_id=project.id,
+        name='test',
+        work_format=ProjectRoleWorkFormatEnum.RemoteWork,
+        workload=1,
+        filename='filename',
+    )
+    role.need_competencies.append(need_competence)
+    role.will_competencies.append(will_competence)
+    db_test.add(role)
+    db_test.commit()
+
+    assert project.roles[0] == role
+
+    assert role.id == 1
+    assert role.project_id == project.id
+    assert role.name == 'test'
+    assert role.work_format == ProjectRoleWorkFormatEnum.RemoteWork
+    assert role.workload == 1
+    assert role.filename == 'filename'
+
+    assert role.need_competencies[0] == need_competence
+    assert role.need_competencies[0].id == 1
+
+    assert role.will_competencies[0] == will_competence
+    assert role.will_competencies[0].id == 2

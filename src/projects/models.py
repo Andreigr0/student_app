@@ -1,6 +1,6 @@
 import enum
 
-from sqlalchemy import Column, Integer, String, Boolean, Enum, TIMESTAMP, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, Enum, TIMESTAMP, ForeignKey, Table
 from sqlalchemy.orm import relationship
 
 from app.database import Base
@@ -10,11 +10,6 @@ from app.utils import TimestampMixin, EditorMixin
 class ProjectParticipant(enum.Enum):
     Head = (1, 'Руководитель')
     Other = (2, 'Участник')
-
-
-class ProjectRoleCompetenceType(enum.Enum):
-    NeedTo = (0, 'Требуемые навыки')
-    WillBe = (1, 'Навыки, которые получит студент по итогам проекта')
 
 
 class ProjectRoleWorkFormatEnum(enum.Enum):
@@ -86,11 +81,11 @@ class ProjectModel(Base, TimestampMixin, EditorMixin):
     company = relationship("CompanyModel", back_populates="projects")
     stages = relationship("ProjectStageModel", back_populates="project")
     managers = relationship("ProjectsManagersModel", back_populates="project")
+    roles = relationship("ProjectRoleModel", back_populates="project")
 
     # report_periods = relationship("ProjectsReportPeriodsModel", back_populates="project")
     # subject_areas = relationship("SubjectArea", secondary="project_subject_area")
     # partners = relationship("Company", secondary="partners")
-    # roles = relationship("ProjectRole", back_populates="project")
     # members = relationship("Member", back_populates="project")
     # bids = relationship("Bid", secondary="project_roles")
     # curator = relationship("Curator", back_populates="project")
@@ -129,3 +124,34 @@ class ProjectsCuratorsModel(Base):
 
     project = relationship(ProjectModel, back_populates="curators")
     curator = relationship("UserModel", back_populates="curated_projects")
+
+
+class ProjectRoleModel(Base):
+    __tablename__ = "project_roles"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    work_format = Column(Enum(ProjectRoleWorkFormatEnum), nullable=False)
+    workload = Column(Integer, nullable=False)
+    filename = Column(String)
+
+    project_id = Column(Integer, ForeignKey("projects.id"), nullable=False)
+    project = relationship("ProjectModel", back_populates="roles")
+
+    need_competencies = relationship("CompetencyModel", secondary="project_role_need_competency")
+    will_competencies = relationship("CompetencyModel", secondary='project_role_will_competency')
+
+
+project_role_need_competency_association = Table(
+    'project_role_need_competency',
+    Base.metadata,
+    Column('project_role_id', Integer, ForeignKey('project_roles.id'), primary_key=True),
+    Column('competency_id', Integer, ForeignKey('competencies.id'), primary_key=True),
+)
+
+project_role_competency_association = Table(
+    'project_role_will_competency',
+    Base.metadata,
+    Column('project_role_id', Integer, ForeignKey('project_roles.id')),
+    Column('competency_id', Integer, ForeignKey('competencies.id')),
+)
