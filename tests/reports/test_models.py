@@ -1,13 +1,15 @@
 from reports.models import StudentReportModel
 
 
-def test_create_student_report(db_test):
+def test_create_student_report(db_test, create_student_model):
+    student = create_student_model()
     report = StudentReportModel(
         filename='test.pdf',
         is_accepted=True,
         content_type='application/pdf',
         file_size=1000,
     )
+    report.student = student
     db_test.add(report)
     db_test.commit()
 

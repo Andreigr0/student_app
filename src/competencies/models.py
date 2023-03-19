@@ -1,8 +1,9 @@
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped
 
 from app.database import Base
 from app.utils import EditorMixin, TimestampMixin
+from students.models import StudentsCompetenciesModel
 
 
 class CompetencyModel(Base, TimestampMixin, EditorMixin):
@@ -11,7 +12,7 @@ class CompetencyModel(Base, TimestampMixin, EditorMixin):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False, unique=True)
 
-    students = relationship('StudentsCompetenciesModel', back_populates='competency')
+    students = relationship(StudentsCompetenciesModel, back_populates='competency')
 
 
 class SubjectAreaModel(Base, TimestampMixin, EditorMixin):

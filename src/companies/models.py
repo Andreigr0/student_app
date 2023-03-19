@@ -1,10 +1,11 @@
-from sqlalchemy import Column, Integer, String, Boolean, Enum, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Boolean, Enum, ForeignKey, func, select
+from sqlalchemy.orm import relationship, column_property
 
 from app.database import Base
 import enum
 
 from app.utils import TimestampMixin, EditorMixin
+from projects.models import ProjectModel
 
 
 class CompanyEmployeeCount(enum.Enum):
@@ -43,6 +44,12 @@ class CompanyModel(Base, TimestampMixin, EditorMixin):
     subscribers = relationship('CompaniesSubscribersModel', back_populates="company")
     type_activities = relationship("CompanyTypeActivitiesModel", back_populates="company")
     projects = relationship("ProjectModel", back_populates="company")
+
+    total_project_count = column_property(
+        select(func.count(ProjectModel.id))
+        .where(ProjectModel.company_id == id)
+        .scalar_subquery()
+    )
 
 
 class ContactCommunicationType(str, enum.Enum):

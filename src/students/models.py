@@ -3,13 +3,13 @@ from sqlalchemy.orm import relationship
 
 from app.database import Base
 from app.utils import TimestampMixin, EditorMixin
+from reports.models import StudentReportModel
 
 
 class StudentModel(Base, TimestampMixin, EditorMixin):
     __tablename__ = "students"
 
     id = Column(Integer, primary_key=True, index=True)
-    # contingent_person_id = Column(Integer, index=True)
     about = Column(Text, nullable=True)
     resume = Column(Text, nullable=True)
     resume_content_type = Column(String(255), nullable=True)
@@ -19,6 +19,7 @@ class StudentModel(Base, TimestampMixin, EditorMixin):
     subscribed_companies = relationship('CompaniesSubscribersModel', back_populates="student")
     subject_areas = relationship('StudentsSubjectAreasModel', back_populates="student")
     competencies = relationship('StudentsCompetenciesModel', back_populates="student")
+    reports = relationship(StudentReportModel, back_populates="student")
 
     # reviews = relationship("MemberReview",
     #                        primaryjoin="Student.contingent_person_id == MemberReview.contingent_person_id")
@@ -27,9 +28,6 @@ class StudentModel(Base, TimestampMixin, EditorMixin):
     # bids = relationship("Bid", primaryjoin="Student.contingent_person_id == Bid.contingent_person_id")
     # project_report_periods = relationship("ProjectReportPeriod", secondary="members")
     # reports = relationship("StudentReport", primaryjoin="Student.contingent_person_id == Member.contingent_person_id")
-    #
-    # def by_contingent_person_id(cls, db, contingent_person_id: int):
-    #     return db.query(cls).filter(cls.contingent_person_id == contingent_person_id).first()
 
 
 class StudentsSubjectAreasModel(Base):

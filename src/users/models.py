@@ -32,11 +32,3 @@ class MemberModel(Base, TimestampMixin):
     # student = relationship('Student', back_populates='members')
     # review = relationship('MemberReview', back_populates='member')
     # project_role = relationship('ProjectRole', back_populates='members')
-
-    @classmethod
-    def by_project_id(cls, session, project_id):
-        return session.query(cls).filter(cls.projectId == project_id)
-
-    @classmethod
-    def by_contingent_person_id(cls, session, contingent_person_id):
-        return session.query(cls).filter(cls.contingentPersonId == contingent_person_id)

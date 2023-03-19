@@ -9,6 +9,7 @@ class StudentReportModel(Base, TimestampMixin):
     __tablename__ = "student_reports"
 
     id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("students.id"), nullable=False, index=True)
 
     # period_id = Column(Integer, ForeignKey("project_report_periods.id"), nullable=False, index=True)
     # member_id = Column(Integer, ForeignKey("members.id"), nullable=False, index=True)
@@ -18,5 +19,6 @@ class StudentReportModel(Base, TimestampMixin):
     content_type = Column(String, nullable=False)
     file_size = Column(Integer, nullable=False)
 
+    student = relationship("StudentModel", back_populates="reports")
     # member = relationship("Member", back_populates="student_reports")
     # project_report_period = relationship("ProjectReportPeriod", back_populates="student_reports")

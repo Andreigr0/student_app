@@ -13,6 +13,7 @@ from app.database import get_db
 from app.core.config import Settings
 from companies.models import CompanyModel, CompanyEmployeeCount, CompanyStatus
 from projects.models import ProjectModel, ProjectTypeEnum, ProjectView, ProjectStatusEnum
+from students.models import StudentModel
 from users.models import UserModel
 
 logger = logging.getLogger(__name__)
@@ -175,3 +176,20 @@ def create_user_model(db_test, faker):
         return user, now
 
     return _create
+
+
+@pytest.fixture
+def create_student_model(db_test):
+    def _create_student():
+        student = StudentModel(
+            about='About',
+            resume='Resume',
+            resume_content_type='application/pdf',
+            resume_file_size=123,
+            is_full_feedback=True,
+        )
+        db_test.add(student)
+        db_test.commit()
+        return student
+
+    return _create_student

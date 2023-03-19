@@ -5,6 +5,8 @@ from sqlalchemy.orm import relationship
 
 from app.database import Base
 from app.utils import TimestampMixin, EditorMixin
+from competencies.models import CompetencyModel
+from users.models import UserModel
 
 
 class ProjectParticipant(enum.Enum):
@@ -123,7 +125,7 @@ class ProjectsCuratorsModel(Base):
     curator_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
 
     project = relationship(ProjectModel, back_populates="curators")
-    curator = relationship("UserModel", back_populates="curated_projects")
+    curator = relationship(UserModel, back_populates="curated_projects")
 
 
 class ProjectRoleModel(Base):
@@ -138,7 +140,7 @@ class ProjectRoleModel(Base):
     project_id = Column(Integer, ForeignKey("projects.id"), nullable=False)
     project = relationship("ProjectModel", back_populates="roles")
 
-    need_competencies = relationship("CompetencyModel", secondary="project_role_need_competency")
+    need_competencies = relationship(CompetencyModel, secondary="project_role_need_competency")
     will_competencies = relationship("CompetencyModel", secondary='project_role_will_competency')
 
 

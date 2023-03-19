@@ -6,4 +6,5 @@ from students.models import StudentModel
 from reports.models import StudentReportModel
 from reviews.models import MemberReviewModel
 from users.models import UserModel
-from projects.models import ProjectModel, ProjectStageModel
+from projects.models import ProjectModel, ProjectStageModel, ProjectsManagersModel, ProjectsCuratorsModel, \
+    ProjectRoleModel
