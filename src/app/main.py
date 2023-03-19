@@ -4,7 +4,8 @@ from fastapi.staticfiles import StaticFiles
 
 from app.database import setup_db, setup_engine
 
-# from products.api import v1 as products
+from companies.api import v1 as companies
+from projects.api import v1 as projects
 
 app = FastAPI()
 # app.add_middleware(
@@ -16,7 +17,8 @@ app = FastAPI()
 # )
 
 # app.mount('/files', StaticFiles(directory='files'), name='static')
-app.include_router(products.router)
+app.include_router(companies.router)
+app.include_router(projects.router)
 
 engine = setup_engine()
 SessionLocal = setup_db(engine)
