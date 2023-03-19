@@ -13,6 +13,7 @@ from app.database import get_db
 from app.core.config import Settings
 from companies.models import CompanyModel, CompanyEmployeeCount, CompanyStatus
 from projects.models import ProjectModel, ProjectTypeEnum, ProjectView, ProjectStatusEnum
+from users.models import UserModel
 
 logger = logging.getLogger(__name__)
 
@@ -155,5 +156,22 @@ def create_project_model(db_test, faker, create_company_model):
         db_test.add(project)
         db_test.commit()
         return project, now
+
+    return _create
+
+
+@pytest.fixture
+def create_user_model(db_test, faker):
+    def _create() -> (UserModel, datetime.datetime):
+        now = datetime.datetime.now()
+        user = UserModel(
+            name='test',
+            email=faker.email(),
+            password='password',
+            email_verified_at=now,
+        )
+        db_test.add(user)
+        db_test.commit()
+        return user, now
 
     return _create

@@ -94,6 +94,7 @@ class ProjectModel(Base, TimestampMixin, EditorMixin):
     # members = relationship("Member", back_populates="project")
     # bids = relationship("Bid", secondary="project_roles")
     # curator = relationship("Curator", back_populates="project")
+    curators = relationship("ProjectsCuratorsModel", back_populates="project")
 
 
 class ProjectStageModel(Base, TimestampMixin):  # todo: add UserMixin
@@ -118,3 +119,13 @@ class ProjectsManagersModel(Base, TimestampMixin):
 
     project = relationship(ProjectModel, back_populates="managers")
     contact = relationship("ContactModel", back_populates="projects")
+
+
+class ProjectsCuratorsModel(Base):
+    __tablename__ = "curators"
+
+    project_id = Column(Integer, ForeignKey("projects.id", ondelete='CASCADE'), primary_key=True)
+    curator_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+
+    project = relationship(ProjectModel, back_populates="curators")
+    curator = relationship("UserModel", back_populates="curated_projects")

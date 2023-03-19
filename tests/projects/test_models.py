@@ -1,6 +1,6 @@
 from companies.models import ContactModel, CompanyModel
 from projects.models import ProjectModel, ProjectParticipant, ProjectRoleCompetenceType, ProjectRoleWorkFormatEnum, \
-    ProjectStatusEnum, ProjectTypeEnum, ProjectView, ProjectStageModel, ProjectsManagersModel
+    ProjectStatusEnum, ProjectTypeEnum, ProjectView, ProjectStageModel, ProjectsManagersModel, ProjectsCuratorsModel
 import datetime
 
 
@@ -64,3 +64,19 @@ def test_create_project_managers_model(db_test, create_project_model, create_com
 
     assert project.managers[0].contact == contact
     assert project.managers[0].participant == ProjectParticipant.Head
+
+
+def test_create_projects_curators_model(db_test, create_project_model, create_user_model):
+    project, _ = create_project_model()
+
+    user, _ = create_user_model()
+
+    projects_curators = ProjectsCuratorsModel()
+    projects_curators.curator = user
+    project.curators.append(projects_curators)
+
+    db_test.add(project)
+    db_test.commit()
+
+    assert project.curators[0].curator == user
+    assert project.curators[0].project == project

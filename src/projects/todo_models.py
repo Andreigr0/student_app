@@ -11,17 +11,6 @@ from sqlalchemy.sql import func
 from app.database import Base
 from app.utils import TimestampMixin
 
-
-class Curator(Base):
-    __tablename__ = "curators"
-
-    project_id = Column(Integer, ForeignKey("projects.id"), primary_key=True)
-    curator_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
-
-    project = relationship("ProjectModel", back_populates="curators")
-    curator = relationship("UserModel", back_populates="curated_projects")
-
-
 member_review_competence_table = Table(
     'member_review_competence',
     Base.metadata,
