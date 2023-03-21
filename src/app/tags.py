@@ -12,9 +12,9 @@ class Tags(str, Enum):
     portfolio = 'Портфолио'
     reviews = 'Отзывы'
     competencies = 'Компетенции'
-
     academic_performance = 'Успеваемость'
     attendance = 'Посещаемость'
+
     schedule = 'Расписание'
     contacts = 'Контакты'
     notifications_history = 'История уведомлений'
