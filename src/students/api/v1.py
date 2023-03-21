@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Body, UploadFile
+from fastapi import APIRouter, Body, UploadFile, Query
 from pydantic import Field
 
 from app.tags import Tags
-from projects.schemas import Project
+from projects.schemas import Project, ProjectsCategory
 from reviews.schemas import Review
 from shared.schemas import FileSchema
 from students.schemas import StudentCompetencies, StudentPortfolio, PublicStudent, PersonalStudent, \
@@ -19,7 +19,7 @@ public_router = APIRouter(
 
 
 @current_router.get('', summary='Личный профиль студента')
-def get_current_student() -> PersonalStudent:
+def get_my_profile() -> PersonalStudent:
     pass
 
 
@@ -56,27 +56,27 @@ def get_available_competencies() -> StudentCompetencies:
 
 
 @current_router.get('/competencies', summary='Получить компетенции текущего пользователя', tags=[Tags.competencies])
-def get_current_student_competencies() -> StudentCompetencies:
+def get_my_competencies() -> StudentCompetencies:
     pass
 
 
 @current_router.patch('/competencies', tags=[Tags.competencies], summary='Обновить компетенции текущего пользователя')
-def update_current_student_competencies(body: UpdateStudentCompetencies) -> StudentCompetencies:
+def update_my_competencies(body: UpdateStudentCompetencies) -> StudentCompetencies:
     pass
 
 
 @current_router.get('/portfolio', tags=[Tags.portfolio])
-def get_current_student_portfolio() -> StudentPortfolio:
+def get_my_portfolio() -> StudentPortfolio:
     pass
 
 
-@current_router.get('/projects', tags=[Tags.projects])
-def get_current_student_projects() -> list[Project]:
+@current_router.get('/projects', tags=[Tags.projects], summary='Мои проекты')
+def get_my_projects(category: ProjectsCategory | None = Query(default=None)) -> list[Project]:
     pass
 
 
 @current_router.get('/reviews', tags=[Tags.reviews])
-def get_current_student_reviews() -> list[Review]:
+def get_my_reviews() -> list[Review]:
     pass
 
 
