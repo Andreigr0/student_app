@@ -9,6 +9,9 @@ class Tags(str, Enum):
     curriculum = 'Дисциплины'
     reports = 'Отчеты'
     invitations = 'Приглашения'
+    portfolio = 'Портфолио'
+    reviews = 'Отзывы'
+    competencies = 'Компетенции'
 
     academic_performance = 'Успеваемость'
     attendance = 'Посещаемость'
