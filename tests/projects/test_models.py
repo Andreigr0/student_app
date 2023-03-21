@@ -13,7 +13,7 @@ def test_create_project_model(db_test, create_project_model):
     assert project.name == 'test'
     assert project.is_visible is True
     assert project.type == ProjectTypeEnum.Research
-    assert project.view == ProjectView.DigitalAcademy
+    assert project.kind == ProjectView.DigitalAcademy
     assert project.status == ProjectStatusEnum.Done
     assert project.description == 'description'
     assert project.problem == 'problem'

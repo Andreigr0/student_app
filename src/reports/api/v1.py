@@ -19,11 +19,11 @@ def get_reports() -> list[Report]:
     pass
 
 
-@router.post('', status_code=201, summary='Добавить новый отчет')
+@router.post('', status_code=201, summary='Добавить новый отчет', tags=[Tags.projects])
 def send_report(body: ReportCreate):
     pass
 
 
-@router.patch('/{id}', summary='Заменить отчет')
+@router.patch('/{id}', summary='Заменить отчет', tags=[Tags.projects])
 def update_report(id: int, body: ReportUpdate):
     pass
