@@ -1,18 +1,6 @@
-import enum
-
 from pydantic import BaseModel, Field
 
-from shared.schemas import FileSchema
-
-
-class SemesterType(enum.Enum):
-    FALL = 1
-    SPRING = 2
-
-
-class Semester(BaseModel):
-    year: int
-    semester_type: SemesterType
+from shared.schemas import FileSchema, Semester
 
 
 class Subject(BaseModel):

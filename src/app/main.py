@@ -10,6 +10,7 @@ from students.api import v1 as students
 from curriculum.api import v1 as curriculum
 from reports.api import v1 as reports
 from invitations.api import v1 as invitations
+from academic_performance.api import v1 as academic_performance
 
 app = FastAPI(
     swagger_ui_parameters={  # https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
@@ -28,6 +29,7 @@ app = FastAPI(
 # )
 
 # app.mount('/files', StaticFiles(directory='files'), name='static')
+app.include_router(academic_performance.router)
 app.include_router(companies.router)
 app.include_router(projects.router)
 app.include_router(students.current_router)
