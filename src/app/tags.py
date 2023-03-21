@@ -7,6 +7,7 @@ class Tags(str, Enum):
     students = 'Публичный профиль студента'
     companies = 'Компании'
     curriculum = 'Дисциплины'
+    reports = 'Отчеты'
 
     academic_performance = 'Успеваемость'
     attendance = 'Посещаемость'
@@ -14,5 +15,4 @@ class Tags(str, Enum):
     contacts = 'Контакты'
     projects_applications = 'Заявки на проекты'
     invitations = 'Приглашения'
-    reports = 'Отчеты'
     notifications_history = 'История уведомлений'

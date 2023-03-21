@@ -8,8 +8,16 @@ from companies.api import v1 as companies
 from projects.api import v1 as projects
 from students.api import v1 as students
 from curriculum.api import v1 as curriculum
+from reports.api import v1 as reports
 
-app = FastAPI()
+app = FastAPI(
+    swagger_ui_parameters={  # https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
+        "docExpansion": "list",
+        "defaultModelsExpandDepth": 3,
+        "defaultModelExpandDepth": 3,
+        "filter": True,
+    }
+)
 # app.add_middleware(
 #     CORSMiddleware,
 #     allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
@@ -24,6 +32,7 @@ app.include_router(projects.router)
 app.include_router(students.current_router)
 app.include_router(students.public_router)
 app.include_router(curriculum.router)
+app.include_router(reports.router)
 
 engine = setup_engine()
 SessionLocal = setup_db(engine)
