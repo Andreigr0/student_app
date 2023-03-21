@@ -13,6 +13,7 @@ from invitations.api import v1 as invitations
 from academic_performance.api import v1 as academic_performance
 from attendance.api import v1 as attendance
 from contacts.api import v1 as contacts
+from reviews.api import v1 as reviews
 
 app = FastAPI(
     swagger_ui_parameters={  # https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
@@ -41,6 +42,7 @@ app.include_router(students.public_router)
 app.include_router(curriculum.router)
 app.include_router(reports.router)
 app.include_router(invitations.router)
+app.include_router(reviews.router)
 
 engine = setup_engine()
 SessionLocal = setup_db(engine)

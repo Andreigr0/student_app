@@ -18,3 +18,4 @@ class Tags(str, Enum):
 
     schedule = 'Расписание'
     notifications_history = 'История уведомлений'
+    settings = 'Настройки'
