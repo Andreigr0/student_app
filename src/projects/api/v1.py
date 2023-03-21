@@ -20,7 +20,7 @@ def get_project(id: int) -> ProjectDetails:
     return None
 
 
-@router.post('/{id}/participate', status_code=201, summary='Запрос на участие в проекте')
+@router.post('/{id}/apply', summary='Запрос на участие в проекте', tags=[Tags.invitations], status_code=201)
 def participate_in_project(id: int, data: ParticipationCreate) -> ProjectDetails:
     pass
 

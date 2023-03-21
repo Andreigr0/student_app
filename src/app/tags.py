@@ -8,11 +8,10 @@ class Tags(str, Enum):
     companies = 'Компании'
     curriculum = 'Дисциплины'
     reports = 'Отчеты'
+    invitations = 'Приглашения'
 
     academic_performance = 'Успеваемость'
     attendance = 'Посещаемость'
     schedule = 'Расписание'
     contacts = 'Контакты'
-    projects_applications = 'Заявки на проекты'
-    invitations = 'Приглашения'
     notifications_history = 'История уведомлений'

@@ -9,6 +9,7 @@ from projects.api import v1 as projects
 from students.api import v1 as students
 from curriculum.api import v1 as curriculum
 from reports.api import v1 as reports
+from invitations.api import v1 as invitations
 
 app = FastAPI(
     swagger_ui_parameters={  # https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
@@ -33,6 +34,7 @@ app.include_router(students.current_router)
 app.include_router(students.public_router)
 app.include_router(curriculum.router)
 app.include_router(reports.router)
+app.include_router(invitations.router)
 
 engine = setup_engine()
 SessionLocal = setup_db(engine)
