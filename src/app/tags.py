@@ -14,7 +14,7 @@ class Tags(str, Enum):
     competencies = 'Компетенции'
     academic_performance = 'Успеваемость'
     attendance = 'Посещаемость'
+    contacts = 'Контакты'
 
     schedule = 'Расписание'
-    contacts = 'Контакты'
     notifications_history = 'История уведомлений'
