@@ -28,5 +28,11 @@ class Semester(BaseModel):
 
 @dataclass
 class SemesterQuery:
-    year: int | None = Query(default=None, title='Год', ge=1950, le=datetime.now().year)
-    semester_type: SemesterType | None = Query(default=None, title='Семестр')
+    year: int | None = Query(default=None, description='Год', ge=1950, le=datetime.now().year)
+    semester_type: SemesterType | None = Query(default=None, description='Семестр')
+
+
+@dataclass
+class PaginationQuery:
+    page: int = Query(default=1, description='Страница', ge=1)
+    per_page: int = Query(default=10, description='Количество элементов на странице', ge=1, le=100)

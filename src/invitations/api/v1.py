@@ -3,6 +3,7 @@ from starlette import status
 
 from app.tags import Tags
 from invitations.schemas import Invitation, InvitationsQueryParams, InvitationsFilters, InvitationDetails
+from shared.schemas import PaginationQuery
 
 router = APIRouter(
     prefix='/invitations',
@@ -16,7 +17,8 @@ def get_invitations_filters() -> InvitationsFilters:
 
 
 @router.get('', summary='Получить все приглашения')
-def get_invitations(filters: InvitationsQueryParams = Depends()) -> list[Invitation]:
+def get_invitations(filters: InvitationsQueryParams = Depends(),
+                    pagination: PaginationQuery = Depends()) -> list[Invitation]:
     pass
 
 

@@ -6,6 +6,7 @@ from app.tags import Tags
 from companies.models import CompanyModel
 from companies.schemas import Company, CompanyDetails
 from projects.schemas import Project
+from shared.schemas import PaginationQuery
 
 router = APIRouter(
     prefix='/companies',
@@ -13,9 +14,8 @@ router = APIRouter(
 )
 
 
-@router.get('', response_model=list[Company])
-# @router.get('')
-def get_companies(db: Session = Depends(get_db)):
+@router.get('', summary='Получить список компаний')
+def get_companies(db: Session = Depends(get_db), pagination: PaginationQuery = Depends()) -> list[Company]:
     return db.query(CompanyModel).all()
 
 

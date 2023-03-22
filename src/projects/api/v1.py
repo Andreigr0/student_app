@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends
 from app.tags import Tags
 from projects.schemas import Project, ProjectDetails, ParticipationCreate, ProjectsQueryParams, ProjectsFilters
 from reports.schemas import Report
+from shared.schemas import PaginationQuery
 
 router = APIRouter(
     prefix='/projects',
@@ -16,7 +17,7 @@ def get_projects_filters() -> ProjectsFilters:
 
 
 @router.get('')
-def get_projects(filters: ProjectsQueryParams = Depends()) -> list[Project]:
+def get_projects(filters: ProjectsQueryParams = Depends(), pagination: PaginationQuery = Depends()) -> list[Project]:
     return []
 
 
