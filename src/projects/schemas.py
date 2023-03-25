@@ -16,7 +16,8 @@ class ProjectsCategory(str, enum.Enum):
 
 
 class ProjectStatus(str, enum.Enum):
-    """Статус проекта (Идёт набор, Команда набрана, Завершен, Снят с публикации)"""
+    """Статус проекта (Черновик, Идёт набор, Команда набрана, Завершен, Снят с публикации)"""
+    draft = 'draft'
     under_recruitment = 'under_recruitment'
     recruited = 'recruited'
     finished = 'finished'
@@ -28,6 +29,11 @@ class ProjectType(str, enum.Enum):
     startup = 'startup'
     internship = 'internship'
     research = 'research'
+    software = 'software'
+    software_and_hardware = 'software_and_hardware'
+    research = 'research'
+    startup = 'startup'
+    internship = 'internship'
 
 
 class WorkFormat(str, enum.Enum):
@@ -38,9 +44,10 @@ class WorkFormat(str, enum.Enum):
 
 
 class ProjectKind(str, enum.Enum):
-    """Вид проекта (Цифровая академия, Передовая инженерная школа (ПИШ))"""
+    """Вид проекта (Цифровая академия, Передовая инженерная школа (ПИШ), Государственная проектная организация (ГПО))"""
     digital_academy = 'digital_academy'
     pish = 'pish'
+    gpo = 'gpo'
 
 
 class ProjectsFilters(BaseModel):
@@ -77,10 +84,10 @@ class Project(BaseModel):
     id: int
     name: str = Field(title='Название проекта')
     status: ProjectStatus | None = Field(title='Статус проекта')
+    start_date: datetime.date | None = Field(title='Дата начала проекта')
     finish_date: datetime.date | None = Field(title='Дата завершения проекта')
     competences: list[ValueSchema] | None = Field(title='Компетенции, необходимые для проекта')
 
-    duration: int = Field(ge=1, title='Продолжительность проекта в днях')
     type: ProjectType | None = Field(title='Тип проекта')
     kind: ProjectKind | None = Field(title='Вид проекта')
     company: CompanyShort = Field(title='Компания, которая разместила проект')

@@ -1,34 +1,60 @@
-from sqlalchemy import Column, Integer, String, TIMESTAMP
+import enum
+
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Enum, TIMESTAMP
 from sqlalchemy.orm import relationship
 
 from app.database import Base
-from app.utils import TimestampMixin
 
 
-class UserModel(Base, TimestampMixin):
-    __tablename__ = 'users'
+class UserType(str, enum.Enum):
+    company_representative = "company_representative"
+    student = "student"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    email = Column(String, unique=True, index=True)
+
+class UserModel(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    type = Column(Enum(UserType), nullable=False)
+    email = Column(String, unique=True, index=True, nullable=False)
     password = Column(String, nullable=False)
     email_verified_at = Column(TIMESTAMP, default=None, nullable=True)
 
-    curated_projects = relationship('ProjectsCuratorsModel', back_populates='curator')
+    __mapper_args__ = {
+        "polymorphic_on": type
+    }
 
 
-class MemberModel(Base, TimestampMixin):
-    __tablename__ = 'members'
+class CompanyRepresentativeModel(UserModel):
+    from companies.models import CompanyModel
 
-    id = Column(Integer, primary_key=True)
-    projectId = Column(String)
-    projectRoleId = Column(Integer)
-    contingentPersonId = Column(Integer)
+    __tablename__ = "company_representatives"
 
-    # creatorId = Column(Integer)
-    # updaterId = Column(Integer)
+    id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
+    patronymic = Column(String, nullable=True)
+    birthdate = Column(Date, nullable=False)
+    avatar = Column(String, nullable=True)
 
-    # project = relationship('Project', back_populates='members')
-    # student = relationship('Student', back_populates='members')
-    # review = relationship('MemberReview', back_populates='member')
-    # project_role = relationship('ProjectRole', back_populates='members')
+    company = relationship(CompanyModel, back_populates="representatives")
+
+    __mapper_args__ = {
+        "polymorphic_identity": UserType.company_representative
+    }
+
+
+class StudentModel(UserModel):
+    __tablename__ = "students"
+
+    id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
+    patronymic = Column(String, nullable=True)
+    birthdate = Column(Date, nullable=False)
+    avatar = Column(String, nullable=True)
+
+    __mapper_args__ = {
+        "polymorphic_identity": UserType.student
+    }

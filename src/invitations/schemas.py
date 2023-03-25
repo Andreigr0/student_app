@@ -9,12 +9,12 @@ from shared.schemas import ValueSchema
 
 
 class InvitationStatus(str, enum.Enum):
-    """Статус приглашения"""
+    """Статус приглашения (Новое, Просмотрено, Согласие, В команде, Отклонено, Отозвано, Просрочено)"""
 
     latest = 'latest'
     viewed = 'viewed'
     consent = 'consent'
-    inTeam = 'inTeam'
+    in_team = 'in_team'
     rejected = 'rejected'
     revoked = 'revoked'
     expired = 'expired'

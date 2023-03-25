@@ -11,9 +11,6 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app.database import get_db
 from app.core.config import Settings
-from companies.models import CompanyModel, CompanyEmployeeCount, CompanyStatus
-from projects.models import ProjectModel, ProjectTypeEnum, ProjectView, ProjectStatusEnum
-from students.models import StudentModel
 from users.models import UserModel
 
 logger = logging.getLogger(__name__)
@@ -98,98 +95,59 @@ def test_client_auth(get_db_override, testing_engine, monkey_session):
     return client
 
 
-# @pytest.fixture()
-# def create_user(db_test, faker):
-#     def _create_user():
-#         user_create = UserCreate(email=faker.email(), login=faker.user_name(), password='123')
-#         from users import crud
-#         user = crud.create_user(db=db_test, user=user_create)
-#         return user
-#
-#     return _create_user
+@pytest.fixture()
+def create_company(db_test, faker):
+    from companies.models import CompanyModel
 
-
-@pytest.fixture
-def create_company_model(db_test, faker):
-    def _create() -> CompanyModel:
+    def _create_company() -> CompanyModel:
         company = CompanyModel(
-            name='Company 1',
-            email=faker.email(),
-            has_accreditation=True,
-            site=faker.url(),
+            name=faker.company(),
             description=faker.text(),
-            logo=faker.url(),
-            inn=faker.random_int(),
-            employee_count=CompanyEmployeeCount.small,
-            status=CompanyStatus.moderation,
-            reason_rejection=faker.text(),
+            has_accreditation=True,
         )
         db_test.add(company)
         db_test.commit()
         return company
 
-    return _create
+    return _create_company
 
 
-@pytest.fixture
-def create_project_model(db_test, faker, create_company_model):
-    def _create() -> (ProjectModel, datetime.datetime):
-        company = create_company_model()
-        now = datetime.datetime.now()
-        project = ProjectModel(
-            name='test',
-            is_visible=True,
-            type=ProjectTypeEnum.Research,
-            view=ProjectView.DigitalAcademy,
-            status=ProjectStatusEnum.Done,
-            description='description',
-            problem='problem',
-            purpose='purpose',
-            task='task',
-            result='result',
-            what_will_get='what_will_get',
-            total='total',
-            report='report',
-            reason_rejection='reason_rejection',
-            application_date=now,
-            company_id=company.id,
-        )
-        db_test.add(project)
-        db_test.commit()
-        return project, now
+@pytest.fixture()
+def create_student(db_test, faker):
+    from users.models import StudentModel
 
-    return _create
-
-
-@pytest.fixture
-def create_user_model(db_test, faker):
-    def _create() -> (UserModel, datetime.datetime):
-        now = datetime.datetime.now()
-        user = UserModel(
-            name='test',
-            email=faker.email(),
-            password='password',
-            email_verified_at=now,
-        )
-        db_test.add(user)
-        db_test.commit()
-        return user, now
-
-    return _create
-
-
-@pytest.fixture
-def create_student_model(db_test):
-    def _create_student():
+    def _create_student() -> StudentModel:
         student = StudentModel(
-            about='About',
-            resume='Resume',
-            resume_content_type='application/pdf',
-            resume_file_size=123,
-            is_full_feedback=True,
+            first_name=faker.first_name(),
+            last_name=faker.last_name(),
+            birthdate=faker.date_of_birth(),
+            email=faker.email(),
+            password="password",
         )
         db_test.add(student)
         db_test.commit()
         return student
 
     return _create_student
+
+
+@pytest.fixture()
+def create_company_representative(db_test, faker, create_company):
+    from users.models import CompanyRepresentativeModel
+
+    def _create_company_representative() -> CompanyRepresentativeModel:
+        company = create_company()
+        company_representative = CompanyRepresentativeModel(
+            first_name=faker.first_name(),
+            last_name=faker.last_name(),
+            birthdate=datetime.date(2000, 1, 1),
+            email=faker.email(),
+            password="password",
+        )
+        company_representative.company = company
+
+        db_test.add(company_representative)
+        db_test.commit()
+        return company_representative
+
+    return _create_company_representative
