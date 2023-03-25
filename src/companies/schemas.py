@@ -1,7 +1,8 @@
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
+from projects.models import ProjectCompanyType
 from shared.schemas import ValueSchema
 import enum
 
@@ -34,6 +35,10 @@ class CompanyShort(BaseModel):
     id: int
     name: str
     logo: str
+
+
+class CompanyParticipant(CompanyShort):
+    type: ProjectCompanyType = Field(title='Роль компании в проекте')
 
 
 class Company(CompanyShort):

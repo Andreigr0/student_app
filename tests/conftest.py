@@ -164,3 +164,30 @@ def create_company_representative(db_test, faker, create_company):
         return company_representative
 
     return _create_company_representative
+
+
+@pytest.fixture()
+def create_project_model(db_test):
+    from projects.models import ProjectModel, ProjectStatus, ProjectType, ProjectKind
+
+    def _create_project_model() -> ProjectModel:
+        project = ProjectModel(
+            name='Test project',
+            status=ProjectStatus.under_recruitment,
+            start_date=datetime.date(2021, 1, 1),
+            finish_date=datetime.date(2021, 2, 1),
+            type=ProjectType.research,
+            kind=ProjectKind.digital_academy,
+            is_only_for_digital_academy=True,
+            description='Test description',
+            solving_problems='Test solving problems',
+            goals='Test goals',
+            tasks='Test tasks',
+            results='Test results',
+            what_will_participant_get='Test what will participant get',
+        )
+        db_test.add(project)
+        db_test.commit()
+        return project
+
+    return _create_project_model

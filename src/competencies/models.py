@@ -12,6 +12,7 @@ class CompetencyModel(Base, TimestampMixin, EditorMixin):
     name = Column(String, nullable=False, unique=True)
 
     students = relationship('StudentModel', secondary='students_competencies', back_populates='competencies')
+    projects = relationship('ProjectModel', secondary='project_competencies', back_populates='competencies')
 
 
 class SubjectAreaModel(Base, TimestampMixin, EditorMixin):

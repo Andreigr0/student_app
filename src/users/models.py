@@ -1,6 +1,7 @@
 import enum
 
 from sqlalchemy import Column, Integer, String, Enum, TIMESTAMP
+from sqlalchemy.orm import relationship
 
 from app.database import Base
 
@@ -18,6 +19,8 @@ class UserModel(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     password = Column(String, nullable=False)
     email_verified_at = Column(TIMESTAMP, default=None, nullable=True)
+
+    projects = relationship("ProjectsMembersModel", back_populates="user")
 
     __mapper_args__ = {
         "polymorphic_on": type

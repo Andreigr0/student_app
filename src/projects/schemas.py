@@ -6,48 +6,22 @@ from fastapi import Query
 from pydantic import BaseModel, Field
 
 from shared.schemas import ValueSchema
+from projects.models import ProjectStatus, ProjectType, WorkFormat, ProjectKind, ProjectPosition
 
 
 class ProjectsCategory(str, enum.Enum):
     """Категория проектов (Активные, Завершенные)"""
-
     active = 'active'
     finished = 'finished'
 
 
-class ProjectStatus(str, enum.Enum):
-    """Статус проекта (Черновик, Идёт набор, Команда набрана, Завершен, Снят с публикации)"""
-    draft = 'draft'
-    under_recruitment = 'under_recruitment'
-    recruited = 'recruited'
-    finished = 'finished'
-    withdrawn = 'withdrawn'
-
-
-class ProjectType(str, enum.Enum):
-    """Тип проекта (Стартап, Стажировка, Научно-исследовательский)"""
-    startup = 'startup'
-    internship = 'internship'
-    research = 'research'
-    software = 'software'
-    software_and_hardware = 'software_and_hardware'
-    research = 'research'
-    startup = 'startup'
-    internship = 'internship'
-
-
-class WorkFormat(str, enum.Enum):
-    """Формат работы (полный день, удаленная работа, гибкий график)"""
-    full_time = 'full_time'
-    remote = 'remote'
-    flexible = 'flexible'
-
-
-class ProjectKind(str, enum.Enum):
-    """Вид проекта (Цифровая академия, Передовая инженерная школа (ПИШ), Государственная проектная организация (ГПО))"""
-    digital_academy = 'digital_academy'
-    pish = 'pish'
-    gpo = 'gpo'
+class ProjectRole(BaseModel):
+    id: int
+    name: str
+    work_load: str = Field(title='Загрузка')
+    work_format: WorkFormat = Field(title='Формат работы')
+    needed_competencies: list[ValueSchema] = Field(title='Требуемые компетенции')
+    acquired_competencies: list[ValueSchema] = Field(title='Компетенции, которые получит студент по итогам работы')
 
 
 class ProjectsFilters(BaseModel):
@@ -84,8 +58,8 @@ class Project(BaseModel):
     id: int
     name: str = Field(title='Название проекта')
     status: ProjectStatus | None = Field(title='Статус проекта')
-    start_date: datetime.date | None = Field(title='Дата начала проекта')
-    finish_date: datetime.date | None = Field(title='Дата завершения проекта')
+    start_date: datetime.date = Field(title='Дата начала проекта')
+    finish_date: datetime.date = Field(title='Дата завершения проекта')
     competences: list[ValueSchema] | None = Field(title='Компетенции, необходимые для проекта')
 
     type: ProjectType | None = Field(title='Тип проекта')
@@ -100,33 +74,16 @@ class ProjectStage(BaseModel):
     finish_date: datetime.date
 
 
-class ProjectPosition(str, enum.Enum):
-    """Должность в проекте"""
-
-    student = 'student'
-    curator = 'curator'
-    company = 'company'
-
-
 class ProjectMember(BaseModel):
     id: int
     avatar: str | None
     name: str
     description: str
-    role: ProjectPosition
-
-
-class ProjectRole(BaseModel):
-    id: int
-    name: str
-    work_load: str = Field(title='Загрузка')
-    work_format: str = Field(title='Формат работы')
-    needed_competencies: list[ValueSchema] = Field(title='Требуемые компетенции')
-    acquired_competencies: list[ValueSchema] = Field(title='Компетенции, которые получит студент по итогам работы')
+    position: ProjectPosition
 
 
 class ProjectDetails(Project):
-    from companies.schemas import CompanyShort
+    from companies.schemas import CompanyParticipant
 
     start_date: datetime.date = Field(title='Дата начала проекта')
     finish_date: datetime.date = Field(title='Дата завершения проекта')
@@ -139,7 +96,7 @@ class ProjectDetails(Project):
     results: str = Field(title='Результат')
     what_will_participant_get: str = Field(title='Что получит участник')
     stages: list[ProjectStage] = Field(title='Этапы и сроки проекта')
-    companies: list[CompanyShort] = Field(title='Компании организаторы и партнёры')
+    companies: list[CompanyParticipant] = Field(title='Компании организаторы и партнёры')
     team: list[ProjectMember] = Field(title='Команда')
     other_projects: list[Project] = Field(title='Другие проекты этой области')
 

@@ -16,7 +16,7 @@ class CompanyModel(Base):
 
     # todo: add later
     # competencies = relationship("CompetencyModel", back_populates="company")
-    # projects = relationship("ProjectModel", back_populates="company")
+    projects = relationship("ProjectsCompaniesModel", back_populates="company")
 
     # # Calculated fields: active projects count, total projects count
     # active_projects_count = Column(Integer, nullable=False, default=0)
