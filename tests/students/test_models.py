@@ -60,3 +60,29 @@ def test_create_student_relative(db_test, create_student):
     assert student_relative.last_name == 'last_name'
     assert student_relative.patronymic == 'patronymic'
     assert student_relative.text == 'text'
+
+
+def test_create_student_competence(db_test, create_student):
+    from competencies.models import CompetencyModel
+
+    student = create_student()
+    competence = CompetencyModel(name='name')
+    student.competencies.append(competence)
+
+    db_test.add(student)
+    db_test.commit()
+
+    assert student.competencies == [competence]
+
+
+def test_create_student_subject_area(db_test, create_student):
+    from competencies.models import SubjectAreaModel
+
+    student = create_student()
+    subject_area = SubjectAreaModel(name='name')
+    student.subject_areas.append(subject_area)
+
+    db_test.add(student)
+    db_test.commit()
+
+    assert student.subject_areas == [subject_area]

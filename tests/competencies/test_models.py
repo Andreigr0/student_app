@@ -10,9 +10,7 @@ def test_create_competence(db_test, faker):
 
 
 def test_create_subject_area_model(db_test, faker):
-    subject_area = SubjectAreaModel(
-        name='name',
-    )
+    subject_area = SubjectAreaModel(name='name')
     db_test.add(subject_area)
     db_test.commit()
 

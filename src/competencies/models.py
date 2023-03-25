@@ -3,7 +3,6 @@ from sqlalchemy.orm import relationship, Mapped
 
 from app.database import Base
 from app.utils import EditorMixin, TimestampMixin
-from students.models import StudentsCompetenciesModel
 
 
 class CompetencyModel(Base, TimestampMixin, EditorMixin):
@@ -12,7 +11,7 @@ class CompetencyModel(Base, TimestampMixin, EditorMixin):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False, unique=True)
 
-    students = relationship(StudentsCompetenciesModel, back_populates='competency')
+    students = relationship('StudentModel', secondary='students_competencies', back_populates='competencies')
 
 
 class SubjectAreaModel(Base, TimestampMixin, EditorMixin):
@@ -21,4 +20,4 @@ class SubjectAreaModel(Base, TimestampMixin, EditorMixin):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False, unique=True)
 
-    students = relationship('StudentsSubjectAreasModel', back_populates='subject_area')
+    students = relationship('StudentModel', secondary='students_subject_areas', back_populates='subject_areas')

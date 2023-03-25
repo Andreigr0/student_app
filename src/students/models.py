@@ -1,8 +1,22 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Date
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Table
 from sqlalchemy.orm import relationship
 
 from app.database import Base
 from users.models import UserModel, UserType
+
+student_competencies = Table(
+    "students_competencies",
+    Base.metadata,
+    Column("student_id", Integer, ForeignKey("students.id")),
+    Column("competency_id", Integer, ForeignKey("competencies.id"))
+)
+
+students_subject_areas = Table(
+    "students_subject_areas",
+    Base.metadata,
+    Column("student_id", Integer, ForeignKey("students.id")),
+    Column("subject_area_id", Integer, ForeignKey("subject_areas.id"))
+)
 
 
 class StudentModel(UserModel):
@@ -32,6 +46,18 @@ class StudentModel(UserModel):
 
     contacts = relationship("StudentContactModel", back_populates="student")
     relatives = relationship("StudentRelativeModel", back_populates="student")
+
+    competencies = relationship(
+        "CompetencyModel",
+        secondary=student_competencies,
+        back_populates="students"
+    )
+
+    subject_areas = relationship(
+        "SubjectAreaModel",
+        secondary=students_subject_areas,
+        back_populates="students"
+    )
 
     __mapper_args__ = {
         "polymorphic_identity": UserType.student
