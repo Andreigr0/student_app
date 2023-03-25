@@ -11,7 +11,6 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app.database import get_db
 from app.core.config import Settings
-from users.models import UserModel
 
 logger = logging.getLogger(__name__)
 
@@ -114,15 +113,29 @@ def create_company(db_test, faker):
 
 @pytest.fixture()
 def create_student(db_test, faker):
-    from users.models import StudentModel
+    from students.models import StudentModel
 
     def _create_student() -> StudentModel:
         student = StudentModel(
-            first_name=faker.first_name(),
-            last_name=faker.last_name(),
-            birthdate=faker.date_of_birth(),
             email=faker.email(),
             password="password",
+            first_name='first_name',
+            last_name='last_name',
+            patronymic='patronymic',
+            course='course',
+            group='group',
+            birthdate=datetime.date(2000, 1, 1),
+            avatar='avatar',
+            training_direction='training_direction',
+            training_profile='training_profile',
+            faculty='faculty',
+            cathedra='cathedra',
+            training_form='training_form',
+            about='about',
+            resume='resume',
+            record_book_number='record_book_number',
+            document_number='document_number',
+            snils='snils',
         )
         db_test.add(student)
         db_test.commit()
@@ -133,7 +146,7 @@ def create_student(db_test, faker):
 
 @pytest.fixture()
 def create_company_representative(db_test, faker, create_company):
-    from users.models import CompanyRepresentativeModel
+    from companies.models import CompanyRepresentativeModel
 
     def _create_company_representative() -> CompanyRepresentativeModel:
         company = create_company()
