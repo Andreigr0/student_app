@@ -1,8 +1,15 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Table
 from sqlalchemy.orm import relationship
 
 from app.database import Base
 from users.models import UserModel, UserType
+
+companies_competencies = Table(
+    "companies_competencies",
+    Base.metadata,
+    Column("company_id", Integer, ForeignKey("companies.id"), primary_key=True),
+    Column("competency_id", Integer, ForeignKey("competencies.id"), primary_key=True),
+)
 
 
 class CompanyModel(Base):
@@ -14,9 +21,8 @@ class CompanyModel(Base):
     description = Column(String, nullable=False)
     has_accreditation = Column(Boolean, nullable=False, default=False)
 
-    # todo: add later
-    # competencies = relationship("CompetencyModel", back_populates="company")
     projects = relationship("ProjectsCompaniesModel", back_populates="company")
+    competencies = relationship("CompetencyModel", secondary=companies_competencies)
 
     # # Calculated fields: active projects count, total projects count
     # active_projects_count = Column(Integer, nullable=False, default=0)
