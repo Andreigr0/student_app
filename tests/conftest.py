@@ -9,10 +9,8 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from app.database import get_db
 from app.core.config import Settings
-
-logger = logging.getLogger(__name__)
+from app.database import get_db
 
 
 @pytest.fixture
@@ -20,7 +18,7 @@ def anyio_backend():
     return 'asyncio'
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def monkey_session():
     from _pytest.monkeypatch import MonkeyPatch
     monkey_patch = MonkeyPatch()
@@ -28,7 +26,7 @@ def monkey_session():
     monkey_patch.undo()
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=True, scope='session')
 def get_settings(monkey_session):
     def _get_settings():
         return Settings(_env_file=f"{pathlib.Path(__file__).resolve().parent.parent}/test.env")
@@ -37,14 +35,44 @@ def get_settings(monkey_session):
     return _get_settings
 
 
-@pytest.fixture()
+class RawSQLFormatter(logging.Formatter):
+    def format(self, record):
+        if record.msg.startswith("SELECT") or record.msg.startswith("INSERT") or \
+                record.msg.startswith("UPDATE") or record.msg.startswith("DELETE") or \
+                record.msg.startswith("BEGIN") or record.msg.startswith("COMMIT") or \
+                record.msg.startswith("ROLLBACK"):
+            return record.getMessage() + '\n'
+        return ''
+
+
+class NoEmptyMessagesFilter(logging.Filter):
+    def filter(self, record):
+        if record.msg.startswith("SELECT") or record.msg.startswith("INSERT") or \
+                record.msg.startswith("UPDATE") or record.msg.startswith("DELETE") or \
+                record.msg.startswith("BEGIN") or record.msg.startswith("COMMIT") or \
+                record.msg.startswith("ROLLBACK"):
+            return True
+        return False
+
+
+@pytest.fixture(scope='session')
 def testing_engine(monkey_session, get_settings):
-    testing_engine = create_engine(get_settings().DATABASE_URI)
+    testing_engine = create_engine(get_settings().DATABASE_URI, echo=True, hide_parameters=False)
 
     def _testing_engine():
         return testing_engine
 
     monkey_session.setattr('app.database.setup_engine', _testing_engine)
+
+    logger = logging.getLogger('sqlalchemy')
+    logger.propagate = False
+
+    logger.setLevel(logging.INFO)
+    handler = logging.StreamHandler()
+    handler.setFormatter(RawSQLFormatter())
+    logger.handlers = [handler]
+    handler.addFilter(NoEmptyMessagesFilter())
+
     return testing_engine
 
 
@@ -170,10 +198,10 @@ def create_company_representative(db_test, faker, create_company):
 def create_project_model(db_test):
     from projects.models import ProjectModel, ProjectStatus, ProjectType, ProjectKind
 
-    def _create_project_model() -> ProjectModel:
+    def _create_project_model(status: ProjectStatus | None = None) -> ProjectModel:
         project = ProjectModel(
             name='Test project',
-            status=ProjectStatus.under_recruitment,
+            status=status or ProjectStatus.under_recruitment,
             start_date=datetime.date(2021, 1, 1),
             finish_date=datetime.date(2021, 2, 1),
             type=ProjectType.research,

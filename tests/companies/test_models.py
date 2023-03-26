@@ -1,4 +1,5 @@
 from competencies.models import CompetencyModel
+from projects.models import ProjectsCompaniesModel, ProjectCompanyType, ProjectStatus
 
 
 def test_create_company_model(create_company, db_test):
@@ -23,3 +24,23 @@ def test_create_company_representative(db_test, create_company_representative):
     assert company_representative.last_name is not None
     assert company_representative.birthdate is not None
     assert company_representative.email is not None
+
+
+def test_projects_count(db_test, create_company, create_project_model):
+    company = create_company()
+
+    statuses = [(ProjectStatus.under_recruitment, ProjectCompanyType.organizer),
+                (ProjectStatus.recruited, ProjectCompanyType.partner),
+                (ProjectStatus.withdrawn, ProjectCompanyType.organizer),
+                (ProjectStatus.under_recruitment, ProjectCompanyType.organizer),
+                ]
+    for status, company_type in statuses:
+        project = create_project_model(status=status)
+        association = ProjectsCompaniesModel(project=project, type=company_type)
+        company.projects.append(association)
+
+    db_test.add(company)
+    db_test.commit()
+
+    assert company.active_projects_count == 2
+    assert company.total_projects_count == 3

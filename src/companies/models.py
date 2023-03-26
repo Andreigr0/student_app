@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Table
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Table, func, select
+from sqlalchemy.orm import relationship, column_property, Mapped
 
 from app.database import Base
+from projects.models import ProjectsCompaniesModel, ProjectStatus, ProjectModel, ProjectCompanyType
 from users.models import UserModel, UserType
 
 companies_competencies = Table(
@@ -24,9 +25,26 @@ class CompanyModel(Base):
     projects = relationship("ProjectsCompaniesModel", back_populates="company")
     competencies = relationship("CompetencyModel", secondary=companies_competencies)
 
-    # # Calculated fields: active projects count, total projects count
-    # active_projects_count = Column(Integer, nullable=False, default=0)
-    # total_projects_count = Column(Integer, nullable=False, default=0)
+    active_projects_count = column_property(
+        select(func.count('*'))
+        .select_from(ProjectsCompaniesModel.__table__)
+        .where(ProjectsCompaniesModel.company_id == id)
+        .join(ProjectModel, ProjectsCompaniesModel.project_id == ProjectModel.id)
+        .where(ProjectsCompaniesModel.type == ProjectCompanyType.organizer)
+        .where(ProjectModel.status.in_([ProjectStatus.under_recruitment, ProjectStatus.recruited]))
+        .as_scalar(),
+        deferred=True,
+    )
+
+    total_projects_count = column_property(
+        select(func.count('*'))
+        .select_from(ProjectsCompaniesModel.__table__)
+        .where(ProjectsCompaniesModel.company_id == id)
+        .join(ProjectModel, ProjectsCompaniesModel.project_id == ProjectModel.id)
+        .where(ProjectsCompaniesModel.type == ProjectCompanyType.organizer)
+        .scalar_subquery(),
+        deferred=True,
+    )
 
     representatives = relationship("CompanyRepresentativeModel", back_populates="company")
 
