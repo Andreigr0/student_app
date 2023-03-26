@@ -195,10 +195,10 @@ def create_company_representative(db_test, faker, create_company):
 
 
 @pytest.fixture()
-def create_project_model(db_test):
+def create_project_model(db_test, create_company):
     from projects.models import ProjectModel, ProjectStatus, ProjectType, ProjectKind
 
-    def _create_project_model(status: ProjectStatus | None = None) -> ProjectModel:
+    def _create_project_model(status: ProjectStatus | None = None, attach_company: bool = False) -> ProjectModel:
         project = ProjectModel(
             name='Test project',
             status=status or ProjectStatus.under_recruitment,
@@ -214,8 +214,46 @@ def create_project_model(db_test):
             results='Test results',
             what_will_participant_get='Test what will participant get',
         )
+        if attach_company:
+            company = create_company()
+            from projects.models import ProjectsCompaniesModel, ProjectCompanyType
+            association1 = ProjectsCompaniesModel(company=company, type=ProjectCompanyType.organizer)
+            project.companies.append(association1)
+
         db_test.add(project)
         db_test.commit()
         return project
 
     return _create_project_model
+
+
+@pytest.fixture
+def create_project_role_model(db_test, create_project_model):
+    from competencies.models import CompetencyModel
+    from projects.models import ProjectRoleModel, WorkFormat
+
+    def _create_project_role_model() -> ProjectRoleModel:
+        project = create_project_model(attach_company=True)
+        competency1, competency2 = CompetencyModel(name='Test competency 1'), CompetencyModel(name='Test competency 2')
+
+        role = ProjectRoleModel(
+            work_load='Test work load',
+            work_format=WorkFormat.full_time,
+        )
+        role.project = project
+
+        role.needed_competencies.append(competency1)
+        role.needed_competencies.append(competency2)
+
+        role.acquired_competencies.append(competency1)
+
+        db_test.add(role)
+        db_test.commit()
+
+        assert role.project_id == project.id
+        assert set(role.needed_competencies) == {competency1, competency2}
+        assert set(role.acquired_competencies) == {competency1}
+
+        return role
+
+    return _create_project_role_model

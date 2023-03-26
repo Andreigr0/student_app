@@ -94,6 +94,7 @@ class ProjectRoleModel(Base):
 
     project = relationship("ProjectModel", back_populates="roles")
     members = relationship("ProjectsMembersModel", back_populates="role")
+    reviews = relationship("ReviewModel", back_populates="role")
 
 
 class ProjectTeamStatus(str, enum.Enum):

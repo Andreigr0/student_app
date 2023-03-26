@@ -60,6 +60,7 @@ class StudentModel(UserModel):
     )
 
     reports = relationship("ReportModel", back_populates="student")
+    reviews = relationship("ReviewModel", back_populates="student")
 
     __mapper_args__ = {
         "polymorphic_identity": UserType.student
