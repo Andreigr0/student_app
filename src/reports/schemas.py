@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from shared.schemas import FileSchema
 
 
-class ReportPeriod(BaseModel):
+class ReportStage(BaseModel):
     id: int
     name: str = Field(description='Название периода отчетности (например, "Отчет по итогам 1 этапа")')
 
@@ -14,7 +14,7 @@ class ReportPeriod(BaseModel):
 class Report(BaseModel):
     id: int
     name: str = Field(title='Название проекта')
-    project_deadline: ReportPeriod = Field(title='Срок сдачи проекта')
+    project_deadline: ReportStage = Field(title='Срок сдачи проекта')
     publication_date: datetime.date = Field(title='Дата публикации отчета')
     file: FileSchema = Field(title='Файл отчета')
 
@@ -22,12 +22,11 @@ class Report(BaseModel):
 class ProjectPeriods(BaseModel):
     project_id: int = Field(title='ID проекта')
     project_name: str = Field(title='Название проекта')
-    periods: list[ReportPeriod] = Field(title='Список периодов отчетности')
+    periods: list[ReportStage] = Field(title='Список этапов (периодов отчетности)')
 
 
 class ReportCreate(BaseModel):
-    project_id: int = Field(title='ID проекта')
-    period_id: int = Field(title='ID периода отчетности')
+    stage_id: int = Field(title='ID этапа (периода отчетности)')
     file: UploadFile = Field(title='Файл отчета')
 
 

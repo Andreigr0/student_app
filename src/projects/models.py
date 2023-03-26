@@ -63,6 +63,7 @@ class ProjectStageModel(Base):
     finish_date = Column(Date, nullable=False)
 
     project = relationship("ProjectModel", back_populates="stages")
+    reports = relationship("ReportModel", back_populates="stage")
 
 
 project_roles_needed_competencies = Table(
