@@ -17,20 +17,19 @@ router = APIRouter(
 
 @router.get('', summary='Получить список компаний')
 def get_companies(db: Session = Depends(get_db), pagination: PaginationQuery = Depends()) -> list[Company]:
-    return crud.get_companies(db)
+    return crud.get_companies(db, pagination)
 
 
 @router.get('/{id}')
 def get_company(id: int, db: Session = Depends(get_db)) -> CompanyDetails:
-    return db.query(CompanyModel).get(id)
+    return crud.get_company(db, id)
 
 
-@router.get('/{id}/projects', response_model=list[Project])
+@router.get('/{id}/projects', response_model=list[Project], tags=[Tags.projects, Tags.todo])
 def get_company_projects(id: int, db: Session = Depends(get_db)):
-    return db.query(CompanyModel).get(id).projects
+    pass
 
 
-@router.post('/{id}/subscribe', summary='Подписаться на компанию', status_code=201)
+@router.post('/{id}/subscribe', summary='Подписаться на компанию', status_code=201, tags=[Tags.todo])
 def subscribe_to_company(id: int, db: Session = Depends(get_db)):
-    # return db.query(CompanyModel).get(id).projects
     pass

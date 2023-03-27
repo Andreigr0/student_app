@@ -7,7 +7,7 @@ def test_get_company_not_found(db_test):
     try:
         crud.get_company(db=db_test, company_id=1)
     except ModelNotFoundException as e:
-        assert e.message == 'No such Company'
+        assert e.message == 'Company not found'
 
 
 def test_get_company(db_test, create_company):

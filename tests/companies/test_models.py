@@ -13,6 +13,7 @@ def test_create_company_model(create_company, db_test):
     assert company.description is not None
     assert company.has_accreditation is True
     assert company.logo is None
+    assert company.site is not None
     assert set(company.competencies) == {competency1, competency2}
 
 

@@ -131,6 +131,7 @@ def create_company(db_test, faker):
             name=faker.company(),
             description=faker.text(),
             has_accreditation=True,
+            site=faker.url(),
         )
         db_test.add(company)
         db_test.commit()
@@ -197,8 +198,13 @@ def create_company_representative(db_test, faker, create_company):
 @pytest.fixture()
 def create_project_model(db_test, create_company):
     from projects.models import ProjectModel, ProjectStatus, ProjectType, ProjectKind
+    from companies.models import CompanyModel
 
-    def _create_project_model(status: ProjectStatus | None = None, attach_company: bool = False) -> ProjectModel:
+    def _create_project_model(
+            status: ProjectStatus | None = None,
+            attach_company: bool = False,
+            company: CompanyModel | None = None,
+    ) -> ProjectModel:
         project = ProjectModel(
             name='Test project',
             status=status or ProjectStatus.under_recruitment,
@@ -214,8 +220,8 @@ def create_project_model(db_test, create_company):
             results='Test results',
             what_will_participant_get='Test what will participant get',
         )
-        if attach_company:
-            company = create_company()
+        if attach_company or company is not None:
+            company = create_company() if company is None else company
             from projects.models import ProjectsCompaniesModel, ProjectCompanyType
             association1 = ProjectsCompaniesModel(company=company, type=ProjectCompanyType.organizer)
             project.companies.append(association1)

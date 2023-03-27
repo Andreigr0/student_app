@@ -1,19 +1,17 @@
-import aiofiles
-from fastapi import FastAPI, UploadFile
-from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI
 
-from app.database import setup_db, setup_engine
-
-from companies.api import v1 as companies
-from projects.api import v1 as projects
-from students.api import v1 as students
-from curriculum.api import v1 as curriculum
-from reports.api import v1 as reports
-from invitations.api import v1 as invitations
 from academic_performance.api import v1 as academic_performance
+from app.database import setup_db, setup_engine
+from app.exception_handlers import setup_exception_handlers
 from attendance.api import v1 as attendance
+from companies.api import v1 as companies
 from contacts.api import v1 as contacts
+from curriculum.api import v1 as curriculum
+from invitations.api import v1 as invitations
+from projects.api import v1 as projects
+from reports.api import v1 as reports
 from reviews.api import v1 as reviews
+from students.api import v1 as students
 
 app = FastAPI(
     swagger_ui_parameters={  # https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
@@ -46,3 +44,5 @@ app.include_router(reviews.router)
 
 engine = setup_engine()
 SessionLocal = setup_db(engine)
+
+setup_exception_handlers(app)

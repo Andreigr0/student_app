@@ -11,5 +11,5 @@ class NotFoundException(Exception):
 
 class ModelNotFoundException(NotFoundException):
     def __init__(self, model: Type[Base]):
-        message = f'No such {model.__name__}'.replace('Model', '')
+        message = f'{model.__name__} not found'.replace('Model', '')
         super().__init__(message)

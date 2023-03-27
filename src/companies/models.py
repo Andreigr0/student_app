@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Table, func
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship, object_session
 
 from app.database import Base
@@ -21,6 +22,7 @@ class CompanyModel(Base):
     logo = Column(String, nullable=True)
     description = Column(String, nullable=False)
     has_accreditation = Column(Boolean, nullable=False, default=False)
+    site = Column(String, nullable=False)
 
     projects = relationship("ProjectsCompaniesModel", back_populates="company")
     competencies = relationship("CompetencyModel", secondary=companies_competencies)
@@ -51,6 +53,7 @@ class CompanyModel(Base):
         )
 
     representatives = relationship("CompanyRepresentativeModel", back_populates="company")
+    proj = association_proxy("projects", "project")
 
 
 class CompanyRepresentativeModel(UserModel):

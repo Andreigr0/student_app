@@ -34,7 +34,7 @@ class ContactCommunicationType(str, enum.Enum):
 class CompanyShort(BaseModel):
     id: int
     name: str
-    logo: str
+    logo: str | None
 
 
 class CompanyParticipant(CompanyShort):
@@ -44,7 +44,7 @@ class CompanyParticipant(CompanyShort):
 class Company(CompanyShort):
     competencies: list[ValueSchema]
     has_accreditation: bool
-    active_project_count: int
+    active_projects_count: int
     total_project_count: int | None
 
     class Config:
