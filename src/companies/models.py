@@ -24,7 +24,7 @@ class CompanyModel(Base):
     has_accreditation = Column(Boolean, nullable=False, default=False)
     site = Column(String, nullable=False)
 
-    projects = relationship("ProjectsCompaniesModel", back_populates="company")
+    projects_companies = relationship("ProjectsCompaniesModel", back_populates="company")
     competencies = relationship("CompetencyModel", secondary=companies_competencies)
 
     @property
@@ -53,7 +53,6 @@ class CompanyModel(Base):
         )
 
     representatives = relationship("CompanyRepresentativeModel", back_populates="company")
-    proj = association_proxy("projects", "project")
 
 
 class CompanyRepresentativeModel(UserModel):

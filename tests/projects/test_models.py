@@ -76,17 +76,17 @@ def test_create_projects_companies(db_test, create_project_model, create_company
     association1 = ProjectsCompaniesModel(company=company1, type=ProjectCompanyType.organizer)
     association2 = ProjectsCompaniesModel(company=company2, type=ProjectCompanyType.partner)
 
-    project.companies.append(association1)
-    project.companies.append(association2)
+    project.projects_companies.append(association1)
+    project.projects_companies.append(association2)
 
     db_test.add(project)
     db_test.commit()
 
-    assert len(project.companies) == 2
-    assert project.companies[0].company == company1
-    assert project.companies[0].type == ProjectCompanyType.organizer
-    assert project.companies[1].company == company2
-    assert project.companies[1].type == ProjectCompanyType.partner
+    assert len(project.projects_companies) == 2
+    assert project.projects_companies[0].company == company1
+    assert project.projects_companies[0].type == ProjectCompanyType.organizer
+    assert project.projects_companies[1].company == company2
+    assert project.projects_companies[1].type == ProjectCompanyType.partner
 
 
 def test_create_members(db_test, create_project_model, create_student, create_company_representative,

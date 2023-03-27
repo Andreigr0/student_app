@@ -38,7 +38,7 @@ def test_projects_count(db_test, create_company, create_project_model):
     for status, company_type in statuses:
         project = create_project_model(status=status)
         association = ProjectsCompaniesModel(project=project, type=company_type)
-        company.projects.append(association)
+        company.projects_companies.append(association)
 
     db_test.add(company)
     db_test.commit()

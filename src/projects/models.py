@@ -133,8 +133,8 @@ class ProjectsCompaniesModel(Base):
     project_id = Column(Integer, ForeignKey("projects.id"), primary_key=True)
     company_id = Column(Integer, ForeignKey("companies.id"), primary_key=True)
 
-    project = relationship("ProjectModel", back_populates="companies")
-    company = relationship("CompanyModel", back_populates="projects")
+    project = relationship("ProjectModel", back_populates="projects_companies")
+    company = relationship("CompanyModel", back_populates="projects_companies")
     type = Column(Enum(ProjectCompanyType), nullable=False)
 
 
@@ -161,6 +161,6 @@ class ProjectModel(Base):
     stages = relationship(ProjectStageModel, back_populates="project")
     roles = relationship(ProjectRoleModel, back_populates="project")
     competencies = relationship("CompetencyModel", secondary=project_competencies, back_populates="projects")
-    companies = relationship(ProjectsCompaniesModel, back_populates="project")
+    projects_companies = relationship(ProjectsCompaniesModel, back_populates="project")
 
     team = relationship(ProjectsMembersModel, back_populates="project")

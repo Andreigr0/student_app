@@ -224,7 +224,7 @@ def create_project_model(db_test, create_company):
             company = create_company() if company is None else company
             from projects.models import ProjectsCompaniesModel, ProjectCompanyType
             association1 = ProjectsCompaniesModel(company=company, type=ProjectCompanyType.organizer)
-            project.companies.append(association1)
+            project.projects_companies.append(association1)
 
         db_test.add(project)
         db_test.commit()
