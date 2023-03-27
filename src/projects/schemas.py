@@ -64,7 +64,10 @@ class Project(BaseModel):
 
     type: ProjectType | None = Field(title='Тип проекта')
     kind: ProjectKind | None = Field(title='Вид проекта')
-    company: CompanyShort = Field(title='Компания, которая разместила проект')
+    company: CompanyShort | None = Field(title='Компания, которая разместила проект')
+
+    class Config:
+        orm_mode = True
 
 
 class ProjectStage(BaseModel):

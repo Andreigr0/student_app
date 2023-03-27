@@ -1,6 +1,6 @@
 import enum
 
-from sqlalchemy import Column, Integer, String, Enum, Date, ForeignKey, Boolean, Table
+from sqlalchemy import Column, Integer, String, Enum, Date, ForeignKey, Boolean, Table, and_
 from sqlalchemy.orm import relationship
 
 from app.database import Base
@@ -164,3 +164,12 @@ class ProjectModel(Base):
     projects_companies = relationship(ProjectsCompaniesModel, back_populates="project")
 
     team = relationship(ProjectsMembersModel, back_populates="project")
+
+    organizers = relationship(
+        ProjectsCompaniesModel,
+        primaryjoin=and_(ProjectsCompaniesModel.project_id == id,
+                         ProjectsCompaniesModel.type == ProjectCompanyType.organizer))
+
+    @property
+    def company(self):
+        return self.organizers[0].company if self.organizers else None

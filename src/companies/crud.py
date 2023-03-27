@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.exceptions import ModelNotFoundException
-from companies.models import CompanyModel
+from app.models import CompanyModel
 from shared.schemas import PaginationQuery
 
 
@@ -19,3 +19,8 @@ def get_company(db: Session, company_id: int):
     if not company:
         raise ModelNotFoundException(CompanyModel)
     return company
+
+
+def get_company_projects(db: Session, company_id: int):
+    company = get_company(db=db, company_id=company_id)
+    return company.organized_projects.all()

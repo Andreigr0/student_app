@@ -88,6 +88,9 @@ def test_create_projects_companies(db_test, create_project_model, create_company
     assert project.projects_companies[1].company == company2
     assert project.projects_companies[1].type == ProjectCompanyType.partner
 
+    assert project.organizers[0].company == company1
+    assert project.company == company1
+
 
 def test_create_members(db_test, create_project_model, create_student, create_company_representative,
                         create_project_role_model):

@@ -1,10 +1,9 @@
-from typing import Any
+import enum
 
 from pydantic import BaseModel, Field
 
 from projects.models import ProjectCompanyType
 from shared.schemas import ValueSchema
-import enum
 
 
 class CompanyEmployeeCount(enum.Enum):
@@ -36,6 +35,9 @@ class CompanyShort(BaseModel):
     name: str
     logo: str | None
 
+    class Config:
+        orm_mode = True
+
 
 class CompanyParticipant(CompanyShort):
     type: ProjectCompanyType = Field(title='Роль компании в проекте')
@@ -45,7 +47,7 @@ class Company(CompanyShort):
     competencies: list[ValueSchema]
     has_accreditation: bool
     active_projects_count: int
-    total_project_count: int | None
+    total_projects_count: int | None
 
     class Config:
         orm_mode = True
@@ -57,7 +59,7 @@ class CompanyDetails(Company):
     inn: int | None
     site: str
     description: str
-    employee_count: Any
+    employee_count: int | None  # todo: add field to model
     projects: list[Project]
 
     class Config:

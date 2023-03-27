@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Table, func
-from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship, object_session
 
 from app.database import Base
@@ -26,6 +25,21 @@ class CompanyModel(Base):
 
     projects_companies = relationship("ProjectsCompaniesModel", back_populates="company")
     competencies = relationship("CompetencyModel", secondary=companies_competencies)
+
+    @property
+    def organized_projects(self):
+        return (
+            object_session(self)
+            .query(ProjectModel)
+            .select_from(ProjectsCompaniesModel.__table__)
+            .where(ProjectsCompaniesModel.company_id == self.id)
+            .join(ProjectModel, ProjectsCompaniesModel.project_id == ProjectModel.id)
+            .where(ProjectsCompaniesModel.type == ProjectCompanyType.organizer)
+        )
+
+    @property
+    def projects(self):
+        return self.organized_projects.limit(3).all()
 
     @property
     def active_projects_count(self):

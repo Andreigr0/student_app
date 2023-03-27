@@ -3,11 +3,10 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.tags import Tags
-from companies.models import CompanyModel
+from companies import crud
 from companies.schemas import Company, CompanyDetails
 from projects.schemas import Project
 from shared.schemas import PaginationQuery
-from companies import crud
 
 router = APIRouter(
     prefix='/companies',
@@ -25,9 +24,9 @@ def get_company(id: int, db: Session = Depends(get_db)) -> CompanyDetails:
     return crud.get_company(db, id)
 
 
-@router.get('/{id}/projects', response_model=list[Project], tags=[Tags.projects, Tags.todo])
-def get_company_projects(id: int, db: Session = Depends(get_db)):
-    pass
+@router.get('/{id}/projects', tags=[Tags.projects])
+def get_company_projects(id: int, db: Session = Depends(get_db)) -> list[Project]:
+    return crud.get_company_projects(db=db, company_id=id)
 
 
 @router.post('/{id}/subscribe', summary='Подписаться на компанию', status_code=201, tags=[Tags.todo])
