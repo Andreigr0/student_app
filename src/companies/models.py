@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Table, func, select
-from sqlalchemy.orm import relationship, column_property, Mapped
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Table, func
+from sqlalchemy.orm import relationship, object_session
 
 from app.database import Base
 from projects.models import ProjectsCompaniesModel, ProjectStatus, ProjectModel, ProjectCompanyType
@@ -25,26 +25,30 @@ class CompanyModel(Base):
     projects = relationship("ProjectsCompaniesModel", back_populates="company")
     competencies = relationship("CompetencyModel", secondary=companies_competencies)
 
-    active_projects_count = column_property(
-        select(func.count('*'))
-        .select_from(ProjectsCompaniesModel.__table__)
-        .where(ProjectsCompaniesModel.company_id == id)
-        .join(ProjectModel, ProjectsCompaniesModel.project_id == ProjectModel.id)
-        .where(ProjectsCompaniesModel.type == ProjectCompanyType.organizer)
-        .where(ProjectModel.status.in_([ProjectStatus.under_recruitment, ProjectStatus.recruited]))
-        .as_scalar(),
-        deferred=True,
-    )
+    @property
+    def active_projects_count(self):
+        return (
+            object_session(self)
+            .query(func.count('*'))
+            .select_from(ProjectsCompaniesModel.__table__)
+            .where(ProjectsCompaniesModel.company_id == self.id)
+            .join(ProjectModel, ProjectsCompaniesModel.project_id == ProjectModel.id)
+            .where(ProjectsCompaniesModel.type == ProjectCompanyType.organizer)
+            .where(ProjectModel.status.in_([ProjectStatus.under_recruitment, ProjectStatus.recruited]))
+            .scalar()
+        )
 
-    total_projects_count = column_property(
-        select(func.count('*'))
-        .select_from(ProjectsCompaniesModel.__table__)
-        .where(ProjectsCompaniesModel.company_id == id)
-        .join(ProjectModel, ProjectsCompaniesModel.project_id == ProjectModel.id)
-        .where(ProjectsCompaniesModel.type == ProjectCompanyType.organizer)
-        .scalar_subquery(),
-        deferred=True,
-    )
+    @property
+    def total_projects_count(self):
+        return (
+            object_session(self)
+            .query(func.count('*'))
+            .select_from(ProjectsCompaniesModel.__table__)
+            .where(ProjectsCompaniesModel.company_id == self.id)
+            .join(ProjectModel, ProjectsCompaniesModel.project_id == ProjectModel.id)
+            .where(ProjectsCompaniesModel.type == ProjectCompanyType.organizer)
+            .scalar()
+        )
 
     representatives = relationship("CompanyRepresentativeModel", back_populates="company")
 
