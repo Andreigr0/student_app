@@ -1,7 +1,7 @@
 import datetime
 
 from projects.models import ProjectStageModel
-from reports.models import ReportModel
+from reports.models import ReportModel, FileModel
 
 
 def test_create_report(db_test, create_student, create_project_model):
@@ -16,8 +16,7 @@ def test_create_report(db_test, create_student, create_project_model):
     stage.project = project
 
     report = ReportModel(
-        file_name='test.pdf',
-        file_path='path/test.pdf',
+        file=FileModel(file_name='test.pdf', file_path='path/test.pdf'),
         is_accepted=True,
     )
     report.student = student
