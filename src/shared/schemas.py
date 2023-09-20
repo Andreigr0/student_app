@@ -10,6 +10,9 @@ class ValueSchema(BaseModel):
     id: int
     name: str
 
+    class Config:
+        orm_mode = True
+
 
 class FileSchema(BaseModel):
     name: str
@@ -36,3 +39,12 @@ class SemesterQuery:
 class PaginationQuery:
     page: int = Query(default=1, description='Страница', ge=1)
     per_page: int = Query(default=10, description='Количество элементов на странице', ge=1, le=100)
+
+
+class CompanyShort(BaseModel):
+    id: int
+    name: str
+    logo: str | None
+
+    class Config:
+        orm_mode = True

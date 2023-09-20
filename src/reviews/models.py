@@ -26,5 +26,5 @@ class ReviewModel(Base):
     def company(self):
         from projects.models import ProjectCompanyType
         organizer_companies = [company for company in self.project.projects_companies if
-                               company.type == ProjectCompanyType.organizer]
+                               company.types == ProjectCompanyType.organizer]
         return organizer_companies[0] if organizer_companies else None

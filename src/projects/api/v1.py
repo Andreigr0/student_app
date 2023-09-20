@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
+from app.database import get_db
 from app.tags import Tags
 from projects.schemas import Project, ProjectDetails, ParticipationCreate, ProjectsQueryParams, ProjectsFilters
 from reports.schemas import Report
 from shared.schemas import PaginationQuery
+from projects import crud
 
 router = APIRouter(
     prefix='/projects',
@@ -17,8 +20,11 @@ def get_projects_filters() -> ProjectsFilters:
 
 
 @router.get('')
-def get_projects(filters: ProjectsQueryParams = Depends(), pagination: PaginationQuery = Depends()) -> list[Project]:
-    return []
+def get_projects(
+        db: Session = Depends(get_db),
+        filters: ProjectsQueryParams = Depends(),
+        pagination: PaginationQuery = Depends()) -> list[Project]:
+    return crud.get_projects(db=db, pagination=pagination, filters=filters)
 
 
 @router.get('/{id}')

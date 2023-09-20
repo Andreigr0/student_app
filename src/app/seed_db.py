@@ -43,7 +43,7 @@ def seed_companies():
 
 
 def seed_projects():
-    for i in range(20):
+    for i in range(10000):
         status = random.choice(list(ProjectStatus))
 
         project = ProjectModel(
@@ -75,7 +75,7 @@ def seed_projects():
 try:
     # seed_users()
     # seed_companies()
-    # seed_projects()
+    seed_projects()
     db.commit()
 except Exception as e:
     print(e)

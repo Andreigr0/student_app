@@ -1,9 +1,8 @@
 import enum
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 
-from projects.models import ProjectCompanyType
-from shared.schemas import ValueSchema
+from shared.schemas import ValueSchema, CompanyShort
 
 
 class CompanyEmployeeCount(enum.Enum):
@@ -30,21 +29,8 @@ class ContactCommunicationType(str, enum.Enum):
     telegram = "telegram"
 
 
-class CompanyShort(BaseModel):
-    id: int
-    name: str
-    logo: str | None
-
-    class Config:
-        orm_mode = True
-
-
-class CompanyParticipant(CompanyShort):
-    type: ProjectCompanyType = Field(title='Роль компании в проекте')
-
-
 class Company(CompanyShort):
-    competencies: list[ValueSchema]
+    # competencies: list[ValueSchema] # todo
     has_accreditation: bool
     active_projects_count: int
     total_projects_count: int | None

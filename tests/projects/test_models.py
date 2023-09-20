@@ -11,11 +11,11 @@ def test_create_project_model(create_project_model):
 
     assert project.id == 1
     assert project.name == 'Test project'
-    assert project.status == ProjectStatus.under_recruitment
+    assert project.statuses == ProjectStatus.under_recruitment
     assert project.start_date == datetime.date(2021, 1, 1)
     assert project.finish_date == datetime.date(2021, 2, 1)
-    assert project.type == ProjectType.research
-    assert project.kind == ProjectKind.digital_academy
+    assert project.types == ProjectType.research
+    assert project.kinds == ProjectKind.digital_academy
     assert project.is_only_for_digital_academy is True
     assert project.description == 'Test description'
     assert project.solving_problems == 'Test solving problems'
@@ -64,7 +64,7 @@ def test_create_project_role_model(db_test, create_project_role_model):
 
     assert role.id == 1
     assert role.work_load == 'Test work load'
-    assert role.work_format == WorkFormat.full_time
+    assert role.work_formats == WorkFormat.full_time
     assert len(role.needed_competencies) == 2
     assert len(role.acquired_competencies) == 1
 
@@ -84,9 +84,9 @@ def test_create_projects_companies(db_test, create_project_model, create_company
 
     assert len(project.projects_companies) == 2
     assert project.projects_companies[0].company == company1
-    assert project.projects_companies[0].type == ProjectCompanyType.organizer
+    assert project.projects_companies[0].types == ProjectCompanyType.organizer
     assert project.projects_companies[1].company == company2
-    assert project.projects_companies[1].type == ProjectCompanyType.partner
+    assert project.projects_companies[1].types == ProjectCompanyType.partner
 
     assert project.organizers[0].company == company1
     assert project.company == company1
@@ -120,13 +120,13 @@ def test_create_members(db_test, create_project_model, create_student, create_co
     db_test.commit()
 
     assert set(project.team) == {member1, member2}
-    assert project.team[0].role == role
+    assert project.team[0].roles == role
     assert project.team[0].user == student
     assert project.team[0].description == 'Test description'
     assert project.team[0].position == ProjectPosition.student
-    assert project.team[0].status == ProjectTeamStatus.rejected
+    assert project.team[0].statuses == ProjectTeamStatus.rejected
 
-    assert project.team[1].role is None
+    assert project.team[1].roles is None
     assert project.team[1].user == company
     assert project.team[1].position == ProjectPosition.curator
-    assert project.team[1].status == ProjectTeamStatus.accepted
+    assert project.team[1].statuses == ProjectTeamStatus.accepted

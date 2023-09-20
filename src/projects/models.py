@@ -1,7 +1,9 @@
 import enum
+from datetime import date, timedelta
 
-from sqlalchemy import Column, Integer, String, Enum, Date, ForeignKey, Boolean, Table, and_
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Enum, Date, ForeignKey, Boolean, Table, and_, func
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship, column_property
 
 from app.database import Base
 
@@ -168,7 +170,17 @@ class ProjectModel(Base):
     organizers = relationship(
         ProjectsCompaniesModel,
         primaryjoin=and_(ProjectsCompaniesModel.project_id == id,
-                         ProjectsCompaniesModel.type == ProjectCompanyType.organizer))
+                         ProjectsCompaniesModel.type == ProjectCompanyType.organizer),
+        viewonly=True,
+    )
+
+    @hybrid_property
+    def duration(self):
+        return (self.finish_date - self.start_date).days
+
+    @duration.expression
+    def duration(cls):
+        return cls.finish_date - cls.start_date
 
     @property
     def company(self):

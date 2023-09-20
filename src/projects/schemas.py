@@ -1,18 +1,23 @@
 import datetime
 import enum
 from dataclasses import dataclass
+from typing import Any
 
 from fastapi import Query
 from pydantic import BaseModel, Field
 
-from shared.schemas import ValueSchema
-from projects.models import ProjectStatus, ProjectType, WorkFormat, ProjectKind, ProjectPosition
+from shared.schemas import ValueSchema, CompanyShort
+from projects.models import ProjectStatus, ProjectType, WorkFormat, ProjectKind, ProjectPosition, ProjectCompanyType
 
 
 class ProjectsCategory(str, enum.Enum):
     """Категория проектов (Активные, Завершенные)"""
     active = 'active'
     finished = 'finished'
+
+
+class CompanyParticipant(CompanyShort):
+    type: ProjectCompanyType = Field(title='Роль компании в проекте')
 
 
 class ProjectRole(BaseModel):
@@ -38,29 +43,28 @@ class ProjectsFilters(BaseModel):
 @dataclass
 class ProjectsQueryParams:
     query: str | None = Query(default=None, description='Поисковый запрос')
-    status: list[ProjectStatus] | None = Query(default=None, description='Статусы')
-    type: list[ProjectType] | None = Query(default=None, description='Тип')
-    work_format: list[WorkFormat] | None = Query(default=None, description='Формат работы')
-    kind: list[ProjectKind] | None = Query(default=None, description='Вид')
+    statuses: list[ProjectStatus] | None = Query(default=None, description='Статусы')
+    types: list[ProjectType] | None = Query(default=None, description='Тип')
+    work_formats: list[WorkFormat] | None = Query(default=None, description='Формат работы')
+    kinds: list[ProjectKind] | None = Query(default=None, description='Вид')
 
     duration_from: int | None = Query(default=None, description='Продолжительность от (дней)', ge=0)
     duration_to: int | None = Query(default=None, description='Продолжительность до (дней)', le=1000)
 
     company: list[int] | None = Query(default=None, description='Компания')
-    role: list[int] | None = Query(default=None, description='Роль в проекте')
-    subject_area: list[int] | None = Query(default=None, description='Предметная область')
+    roles: list[int] | None = Query(default=None, description='Роль в проекте')
+    subject_areas: list[int] | None = Query(default=None, description='Предметная область')
     skills: list[int] | None = Query(default=None, description='Навыки (Компетенции)')
 
 
 class Project(BaseModel):
-    from companies.schemas import CompanyShort
-
     id: int
     name: str = Field(title='Название проекта')
     status: ProjectStatus | None = Field(title='Статус проекта')
     start_date: datetime.date = Field(title='Дата начала проекта')
     finish_date: datetime.date = Field(title='Дата завершения проекта')
-    competences: list[ValueSchema] | None = Field(title='Компетенции, необходимые для проекта')
+    duration: Any = Field(title='Продолжительность проекта (дней)') # todo fix
+    competencies: list[ValueSchema] | None = Field(title='Компетенции, необходимые для проекта')
 
     type: ProjectType | None = Field(title='Тип проекта')
     kind: ProjectKind | None = Field(title='Вид проекта')
@@ -86,8 +90,6 @@ class ProjectMember(BaseModel):
 
 
 class ProjectDetails(Project):
-    from companies.schemas import CompanyParticipant
-
     start_date: datetime.date = Field(title='Дата начала проекта')
     finish_date: datetime.date = Field(title='Дата завершения проекта')
     is_only_for_digital_academy: bool = Field(title='Проект доступен только для студентов цифровой академии')
